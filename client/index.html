@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang=en>
+<head>
+    <meta charset=utf-8>
+    <title>CALISTO</title>
+    <style type='text/css'>
+        table { border-collapse: collapse; }
+        td { border: 1px solid; padding: 5px; }
+        body{counter-reset: section}
+        h2{counter-reset: sub-section}
+        h3{counter-reset: composite}
+        h4{counter-reset: detail}
+        h2:before{
+            counter-increment: section;
+            content: counter(section) ". ";
+        }
+        h3:before{
+            counter-increment: sub-section;
+            content: counter(section) "." counter(sub-section) ". ";
+        }
+        h4:before{
+            counter-increment: composite;
+            content: counter(section) "." counter(sub-section) "." counter(composite) ". ";
+        }
+        h5:before{
+            counter-increment: detail;
+            content: counter(section) "." counter(sub-section) "." counter(composite) "." counter(detail) ". ";
+        }
+    </style>
+    <script>
+        async function ajax (method)
+        {
+            id = Math.floor(Math.random() * 100000);
+            const r = await fetch ('http://163.9.41.140:7327', { 
+                method: 'POST', 
+                body: `{"jsonrpc":"2.0","id":${id},"method":"${method}"}`
+            });
+            return r.json ();
+        }
+        
+        (async function (){
+            response = await ajax ("get_schema");
+            schema = response.result;
+            function resolve_pointer (schema, pointer)
+            {
+                let r = schema;
+                for (i of pointer.substr (2).split ('/'))
+                {
+                    r = r[i];
+                }
+                return r;
+            }
+            function type_to_html (data)
+            {
+                s = "";
+                s += data.hasOwnProperty ("title") ? `"${data.title}": ` : "";
+                if (data.hasOwnProperty ("oneOf"))
+                {
+                    s += "one of:<ul>";
+                    for (t of data.oneOf)
+                    {
+                        s += '<li>' + type_to_html (t) + '</li>';
+                    }
+                    s += '</ul>';
+                    return s;
+                }
+                if (data.hasOwnProperty ("anyOf"))
+                {
+                    s += "any of:<ul>";
+                    for (t of data.anyOf)
+                    {
+                        s += '<li>' + type_to_html (t) + '</li>';
+                    }
+                    s += '</ul>';
+                    return s;
+                }
+                if (data.type === "array")
+                {
+                    s += '<i>array</i>';
+                    min = data.minItems;
+                    max = data.maxItems;
+                    if (min && max)
+                    {
+                        if (min == max) 
+                        {
+                            s += ` (${min} elements)`;
+                        }
+                        else
+                        {
+                            s += ` (between ${min} and ${max} elements)`
+                        }
+                    }
+                    return s + " of </i>" + type_to_html (data.items);
+                }
+                if (data.type === "object")
+                {
+                    s += "<i>object with</i><ul>";
+                    for (t in data.properties)
+                    {
+                        s += '<li>';
+                        if (data.required && data.required.includes (t))
+                        {
+                            s += " (required) ";
+                        }
+                        else
+                        {
+                            s += " (optional) ";
+                        }
+                        s += '"' + t + '": ' + type_to_html (data.properties[t]) + '</li>';
+                    }
+                    s += '</ul>';
+                    return s;
+                }
+                if (data.type === "string")
+                {
+                    return s + '<i>string</i>';
+                }
+                if (data.type === "number")
+                {
+                    return s + '<i>number</i>';
+                }
+                if (data.hasOwnProperty ("$ref"))
+                {
+                    if (data.$ref.charAt (0) === '#')
+                    {
+                        return s + type_to_html (resolve_pointer (schema, data.$ref));
+                    }
+                    return s + '<code>' + data.$ref + '</code>';
+                }
+                return "<i>(anything)</i>";
+            }
+
+            s = '';
+            for (module_name in schema.definitions)
+            {
+                module_schema = schema.definitions[module_name];
+                s += '<h3>Module "' + module_name + '"</h3><p>' + module_schema.description + '</p>';
+                s += '<p>Available methods:</p><ul>';
+                for (method_name in module_schema.definitions.functions.definitions)
+                {
+                    method_schema = module_schema.definitions.functions.definitions[method_name];
+                    s += '<li><code>' + method_name + '</code><p>' + method_schema.description + '</p>';
+                    s += '<p>Argument: ' + type_to_html (method_schema.definitions.expects) + '</p>' ;
+                    s += '<p>Returns: ' + type_to_html (method_schema.definitions.returns) + '</p>' ;
+                    s += '</li>';
+                }
+                s += '</ul>';
+            }
+
+            document.getElementById ('schema').innerHTML = s;
+
+            s = '";
+            async function list (x)
+            {
+                s += '<p>Available ' + x + ':<ul>';
+                response = await ajax ("property/list_" + x);
+                r = response.result;
+                for (m of r)
+                {
+                    s += '<li>' + m + '</li>';
+                }
+                s += '</ul></p>'
+            }
+            await list ("models");
+            await list ("properties");
+            await list ("substances");
+            await list ("conditions");
+            s += '<p>Available functions :<table><thead><tr><td>Model</td><td>Substance</td><td>Property</td><td>Condition 1</td><td>Condition 2</td></tr></thead><tbody>';
+            response = await ajax ("property/list_functions");
+            r = response.result;
+            for (m of r)
+            {
+                s += `<tr><td>${m.model}</td><td>${m.substance}</td><td>${m.property}</td><td>${m.conditions[0]}</td><td>${m.conditions[1]}</td></tr>`;
+            }
+            s += '</tbody></table></p>'
+            await list ("prefixes");
+            await list ("units");
+
+            document.getElementById ('module-property').innerHTML = s;
+
+        })();
+    </script>
+</head>
+<body>
+  <h1>CALISTO: Remote Numerical Services of the Earth Science Institute of Orléans</h1>
+  <h2>Overview</h2>
+  <p>The CALISTO server accepts calculation requests, performs the calculation and sends back the result.</p>
+  <p>Requests and responses are exchanged using the JSON-RPC protocol, version 2.0.</p>
+  <p>A request sent to the server has a <i>method</i> field specifying the function to be executed
+     and <i>params</i> field containing the parameters passed to the method.</p>
+  <p>The methods (or functions) the server can execute are grouped into modules.
+     The fully qualified name of a method has the form <i>module-name</i>/<i>method-name</i>.
+     For example the module named <code>property</code> has a method named <code>list_units</code>,
+     that takes no argument and returns the list of physical unit symbols the
+     server does understand.
+     To invoke this method in a request you would use its fully qualified
+     name, which is <code>property/list_units</code>. A full request would 
+     look like this:
+     <pre>
+     {
+         "jsonrpc":"2.0",
+         "id":94522,
+         "method":"property/list_units"
+     }
+     </pre>
+     Notes:
+     <ul>
+       <li>The <code>jsonrpc</code> field is mandatory and part of the JSON-RPC protocol. 
+           Its value is fixed by the protocol specification to be <code>2.0</code></li>
+       <li>The <code>id</code> field is mandatory and part of the JSON-RPC protocol. 
+           Its value can be a string or a number and should uniquely identify the request.</li>
+       <li>There is no <code>params</code> field as the method takes no argument.</li>
+     </ul>
+     </p>
+  <p>The modules and their methods are listed in the <a href='#schema-h'>next section</a>.</p>
+  <p>The <code>property</code> module is described <a href='#module-property-h'>after</a>.</p>
+  <h2 id='schema-h'>List of modules and methods</h2>
+  <div id='schema'></div>
+  <h2 id='module-property-h'>The <code>property</code> module</h2>
+  <p>This module has a method that calculates the value of a physical property 
+     of a substance at some conditions, according to a model.</p>
+  <div id='module-property'></div>
+</body>
+</html>
