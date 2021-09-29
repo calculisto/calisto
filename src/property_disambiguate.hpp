@@ -485,6 +485,17 @@ pow (uncertain_value_t <T> const& t, const array_t <U, N>& exp)
     namespace
 isto::uncertain_value
 {
+        template <class T>
+        constexpr auto
+    real (uncertain_value_t <std::complex <T>> const& a)
+    {
+            using std::real;
+        return uncertain_value_t <T> { 
+              real (a.value)
+            , real (a.uncertainty) 
+        };
+    }
+        /*
         template <dimension_t Dimension, class T>
         constexpr auto
     real (quantity_t <Dimension, uncertain_value_t <std::complex <T>>> const& a)
@@ -495,4 +506,5 @@ isto::uncertain_value
             , real (a.magnitude.uncertainty) 
         };
     }
+    */
 } // namespace isto::uncertain_value
