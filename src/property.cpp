@@ -1,6 +1,8 @@
 #include "logger.hpp"
 #include "method.hpp"
 #include <isto/iapws/r6.hpp>
+#include <isto/iapws/r7.hpp>
+#include <isto/iapws/r10.hpp>
     using namespace isto::iapws;
 #include <isto/units/units.hpp>
     using namespace isto::units;
@@ -292,83 +294,63 @@ public:
         // std::string                          // property
         // std::pair <std::string, std::string> // conditions
         // std::string                          // model
+        // =====================================================================
             auto
-        s_range = std::pair {
-              map_m.key_begin <0> ()
-            , map_m.key_end   <0> ()
-        };
+        s = std::optional <std::string> {};
         if (auto is = params.find ("substance"); is && *is != "")
         {
-                auto
             s = is->as <std::string> ();
-            logger_m->info ("  specified substance: {}", s);
-            if (! map_m.contains <0> (s))
+            logger_m->info ("  specified substance: {}", *s);
+            if (!map_m.contains <0> (*s))
             {
                 return value {{"error", { 
                       { "code", 7 }
-                    , { "message", format ("unkown substance: {}", s) }
+                    , { "message", format ("unkown substance: {}", *s) }
                 }}};
             }
-            s_range = map_m.equal_range <0> (s);
         }
         else
         {
             logger_m->info ("  unspecified substance");
         }
-        logger_m->info ("  {} matches", std::distance (s_range.first, s_range.second));
             auto
-        p_range = std::pair {
-              map_m.key_begin <1> ()
-            , map_m.key_end   <1> ()
-        };
+        p = std::optional <std::string> {};
         if (auto ip = params.find ("property"); ip && *ip != "")
         {
-                auto
             p = ip->as <std::string> ();
-            logger_m->info ("  specified property: {}", p);
-            if (! map_m.contains <1> (p))
+            logger_m->info ("  specified property: {}", *p);
+            if (! map_m.contains <1> (*p))
             {
                 return value {{"error", { 
                       { "code", 7 }
-                    , { "message", format ("unkown property: {}", p) }
+                    , { "message", format ("unkown property: {}", *p) }
                 }}};
             }
-            p_range = map_m.equal_range <1> (p);
         }
         else
         {
             logger_m->info ("  unspecified property");
         }
-        logger_m->info ("  {} matches", std::distance (p_range.first, p_range.second));
             auto
-        m_range = std::pair {
-              map_m.key_begin <3> ()
-            , map_m.key_end   <3> ()
-        };
+        m = std::optional <std::string> {};
         if (auto im = params.find ("model"); im && *im != "")
         {
-                auto
             m = im->as <std::string> ();
-            logger_m->info ("  specified model: {}", m);
-            if (! map_m.contains <3> (m))
+            logger_m->info ("  specified model: {}", *m);
+            if (! map_m.contains <3> (*m))
             {
                 return value {{"error", { 
                       { "code", 7 }
-                    , { "message", format ("unkown model: {}", m) }
+                    , { "message", format ("unkown model: {}", *m) }
                 }}};
             }
-            m_range = map_m.equal_range <3> (m);
         }
         else
         {
             logger_m->info ("  unspecified model");
         }
-        logger_m->info ("  {} matches", std::distance (m_range.first, m_range.second));
             auto
-        c_range = std::pair {
-              map_m.key_begin <2> ()
-            , map_m.key_end   <2> ()
-        };
+        c = std::optional <std::pair <std::string, std::string>> {};
         // As per the schema, the array has two elements
         if (auto ic = params.find ("conditions"); ic) 
         {
@@ -384,27 +366,32 @@ public:
                     , { "message", format ("unkown conditions: {}, {}", c1, c2) }
                 }}};
             }
-            c_range = map_m.equal_range <2> ({c1, c2});
+            c = { c1, c2 };
         }
         else
         {
             logger_m->info ("  unspecified conditions");
         }
-        logger_m->info ("  {} matches", std::distance (c_range.first, c_range.second));
+
             auto
-        res = std::set <map_t::value_type> {};
-        map_m.intersection (
-              std::tuple { s_range.first,  p_range.first,  c_range.first,  m_range.first }
-            , std::tuple { s_range.second, p_range.second, c_range.second, m_range.second }
-            , std::inserter (res, res.begin ())
-        );
-        logger_m->info ("  found {} entries", res.size ());
-
-
-        return value {{"error", { 
-              { "code", 7 }
-            , { "message", "Not yet implemented" }
-        }}};
+        r = std::vector <map_t::const_iterator> {};
+        map_m.select (std::back_inserter (r), s, p, c, m);
+        logger_m->info ("  got {} matches", r.size ());
+            auto
+        j = value ( empty_array );
+        for (auto&& e: r)
+        {
+            logger_m->info (
+                  "    {} {} ({}, {}) {}"
+                , std::get <0> (e->first)
+                , std::get <1> (e->first)
+                , std::get <2> (e->first).first
+                , std::get <2> (e->first).second
+                , std::get <3> (e->first)
+            );
+            j.push_back (signature_to_json (e->first));
+        }
+        return value {{"result", j }};
     }
 private:
         class
@@ -491,16 +478,6 @@ private:
             operator * () const
                 -> std::pair <uv_t, uv_t>
             {
-                /*
-                logger_m->info (
-                      "Values are ({} +/- {}) and ({} +/- {})"
-                    , *(owner_m->v1_m)
-                    , *(owner_m->u1_m)
-                    , *(owner_m->v2_m)
-                    , *(owner_m->u2_m)
-                );
-                */
-
                 return std::pair {
                       uv_t { *(owner_m->v1_m), *(owner_m->u1_m) }
                     , uv_t { *(owner_m->v2_m), *(owner_m->u2_m) } 
@@ -745,86 +722,113 @@ public:
     static const map_t
 map
 {
-      ENTRY2( air,   pressure,                       density,         temperature,     Clapeyron, ideal_gas_law_air::pressure                              )
-    , ENTRY2( air,   pressure,                       temperature,     density,         Clapeyron, ideal_gas_law_air::pressure                              )
-    , ENTRY2( air,   density,                        temperature,     pressure,        Clapeyron, ideal_gas_law_air::density                               )
-    , ENTRY2( air,   density,                        pressure,        temperature,     Clapeyron, ideal_gas_law_air::density                               )
-    , ENTRY2( water, pressure,                       density,         temperature,     IAPWS_R6,  r6::pressure                                             )
-    , ENTRY2( water, pressure,                       temperature,     density,         IAPWS_R6,  r6::pressure                                             )
-    , ENTRY1( water, massic_internal_energy,         density,         temperature,     IAPWS_R6,  r6::massic_internal_energy,         massic_energy        )
-    , ENTRY1( water, massic_internal_energy,         temperature,     density,         IAPWS_R6,  r6::massic_internal_energy,         massic_energy        )
-    , ENTRY2( water, massic_entropy,                 density,         temperature,     IAPWS_R6,  r6::massic_entropy                                       )
-    , ENTRY2( water, massic_entropy,                 temperature,     density,         IAPWS_R6,  r6::massic_entropy                                       )
-    , ENTRY1( water, massic_enthalpy,                density,         temperature,     IAPWS_R6,  r6::massic_enthalpy,                massic_energy        )
-    , ENTRY1( water, massic_enthalpy,                temperature,     density,         IAPWS_R6,  r6::massic_enthalpy,                massic_energy        )
-    , ENTRY1( water, massic_isochoric_heat_capacity, density,         temperature,     IAPWS_R6,  r6::massic_isochoric_heat_capacity, massic_heat_capacity )
-    , ENTRY1( water, massic_isochoric_heat_capacity, temperature,     density,         IAPWS_R6,  r6::massic_isochoric_heat_capacity, massic_heat_capacity )
-    , ENTRY1( water, massic_isobaric_heat_capacity,  density,         temperature,     IAPWS_R6,  r6::massic_isobaric_heat_capacity,  massic_heat_capacity )
-    , ENTRY1( water, massic_isobaric_heat_capacity,  temperature,     density,         IAPWS_R6,  r6::massic_isobaric_heat_capacity,  massic_heat_capacity )
-    , ENTRY1( water, massic_gibbs_free_energy,       density,         temperature,     IAPWS_R6,  r6::massic_gibbs_free_energy,       massic_energy        )
-    , ENTRY1( water, massic_gibbs_free_energy,       temperature,     density,         IAPWS_R6,  r6::massic_gibbs_free_energy,       massic_energy        )
-    , ENTRY1( water, speed_of_sound,                 density,         temperature,     IAPWS_R6,  r6::speed_of_sound,                 velocity             )
-    , ENTRY1( water, speed_of_sound,                 temperature,     density,         IAPWS_R6,  r6::speed_of_sound,                 velocity             )
-    , ENTRY1( water, density,                        massic_enthalpy, massic_entropy,  IAPWS_R7,  r7::density,                        density              )
-    , ENTRY1( water, density,                        massic_enthalpy, pressure,        IAPWS_R7,  r7::density,                        density              )
-    , ENTRY1( water, density,                        massic_entropy,  massic_enthalpy, IAPWS_R7,  r7::density,                        density              )
-    , ENTRY1( water, density,                        massic_entropy,  pressure,        IAPWS_R7,  r7::density,                        density              )
-    , ENTRY1( water, density,                        pressure,        massic_enthalpy, IAPWS_R7,  r7::density,                        density              )
-    , ENTRY1( water, density,                        pressure,        massic_entropy,  IAPWS_R7,  r7::density,                        density              )
-    , ENTRY1( water, density,                        pressure,        temperature,     IAPWS_R7,  r7::density,                        density              )
-    , ENTRY1( water, density,                        temperature,     pressure,        IAPWS_R7,  r7::density,                        density              )
-    , ENTRY1( water, massic_enthalpy,                massic_entropy,  pressure,        IAPWS_R7,  r7::massic_enthalpy,                massic_enthalpy      )
-    , ENTRY1( water, massic_enthalpy,                pressure,        massic_entropy,  IAPWS_R7,  r7::massic_enthalpy,                massic_enthalpy      )
-    , ENTRY1( water, massic_enthalpy,                pressure,        temperature,     IAPWS_R7,  r7::massic_enthalpy,                massic_enthalpy      )
-    , ENTRY1( water, massic_enthalpy,                temperature,     pressure,        IAPWS_R7,  r7::massic_enthalpy,                massic_enthalpy      )
-    , ENTRY1( water, massic_entropy,                 massic_enthalpy, pressure,        IAPWS_R7,  r7::massic_entropy,                 massic_entropy       )
-    , ENTRY1( water, massic_entropy,                 pressure,        massic_enthalpy, IAPWS_R7,  r7::massic_entropy,                 massic_entropy       )
-    , ENTRY1( water, massic_entropy,                 pressure,        temperature,     IAPWS_R7,  r7::massic_entropy,                 massic_entropy       )
-    , ENTRY1( water, massic_entropy,                 temperature,     pressure,        IAPWS_R7,  r7::massic_entropy,                 massic_entropy       )
-    , ENTRY1( water, massic_internal_energy,         massic_enthalpy, massic_entropy,  IAPWS_R7,  r7::massic_internal_energy,         massic_energy        )
-    , ENTRY1( water, massic_internal_energy,         massic_enthalpy, pressure,        IAPWS_R7,  r7::massic_internal_energy,         massic_energy        )
-    , ENTRY1( water, massic_internal_energy,         massic_entropy,  massic_enthalpy, IAPWS_R7,  r7::massic_internal_energy,         massic_energy        )
-    , ENTRY1( water, massic_internal_energy,         massic_entropy,  pressure,        IAPWS_R7,  r7::massic_internal_energy,         massic_energy        )
-    , ENTRY1( water, massic_internal_energy,         pressure,        massic_enthalpy, IAPWS_R7,  r7::massic_internal_energy,         massic_energy        )
-    , ENTRY1( water, massic_internal_energy,         pressure,        massic_entropy,  IAPWS_R7,  r7::massic_internal_energy,         massic_energy        )
-    , ENTRY1( water, massic_internal_energy,         pressure,        temperature,     IAPWS_R7,  r7::massic_internal_energy,         massic_energy        )
-    , ENTRY1( water, massic_internal_energy,         temperature,     pressure,        IAPWS_R7,  r7::massic_internal_energy,         massic_energy        )
-    , ENTRY1( water, massic_isobaric_heat_capacity,  massic_enthalpy, massic_entropy,  IAPWS_R7,  r7::massic_isobaric_heat_capacity,  massic_heat_capacity )
-    , ENTRY1( water, massic_isobaric_heat_capacity,  massic_enthalpy, pressure,        IAPWS_R7,  r7::massic_isobaric_heat_capacity,  massic_heat_capacity )
-    , ENTRY1( water, massic_isobaric_heat_capacity,  massic_entropy,  massic_enthalpy, IAPWS_R7,  r7::massic_isobaric_heat_capacity,  massic_heat_capacity )
-    , ENTRY1( water, massic_isobaric_heat_capacity,  massic_entropy,  pressure,        IAPWS_R7,  r7::massic_isobaric_heat_capacity,  massic_heat_capacity )
-    , ENTRY1( water, massic_isobaric_heat_capacity,  pressure,        massic_enthalpy, IAPWS_R7,  r7::massic_isobaric_heat_capacity,  massic_heat_capacity )
-    , ENTRY1( water, massic_isobaric_heat_capacity,  pressure,        massic_entropy,  IAPWS_R7,  r7::massic_isobaric_heat_capacity,  massic_heat_capacity )
-    , ENTRY1( water, massic_isobaric_heat_capacity,  pressure,        temperature,     IAPWS_R7,  r7::massic_isobaric_heat_capacity,  massic_heat_capacity )
-    , ENTRY1( water, massic_isobaric_heat_capacity,  temperature,     pressure,        IAPWS_R7,  r7::massic_isobaric_heat_capacity,  massic_heat_capacity )
-    , ENTRY1( water, massic_volume,                  massic_enthalpy, massic_entropy,  IAPWS_R7,  r7::massic_volume,                  massic_volume        )
-    , ENTRY1( water, massic_volume,                  massic_enthalpy, pressure,        IAPWS_R7,  r7::massic_volume,                  massic_volume        )
-    , ENTRY1( water, massic_volume,                  massic_entropy,  massic_enthalpy, IAPWS_R7,  r7::massic_volume,                  massic_volume        )
-    , ENTRY1( water, massic_volume,                  massic_entropy,  pressure,        IAPWS_R7,  r7::massic_volume,                  massic_volume        )
-    , ENTRY1( water, massic_volume,                  pressure,        massic_enthalpy, IAPWS_R7,  r7::massic_volume,                  massic_volume        )
-    , ENTRY1( water, massic_volume,                  pressure,        massic_entropy,  IAPWS_R7,  r7::massic_volume,                  massic_volume        )
-    , ENTRY1( water, massic_volume,                  pressure,        temperature,     IAPWS_R7,  r7::massic_volume,                  massic_volume        )
-    , ENTRY1( water, massic_volume,                  temperature,     pressure,        IAPWS_R7,  r7::massic_volume,                  massic_volume        )
-    , ENTRY1( water, pressure,                       massic_enthalpy, massic_entropy,  IAPWS_R7,  r7::pressure,                       pressure             )
-    , ENTRY1( water, pressure,                       massic_entropy,  massic_enthalpy, IAPWS_R7,  r7::pressure,                       pressure             )
-    , ENTRY1( water, speed_of_sound,                 massic_enthalpy, massic_entropy,  IAPWS_R7,  r7::speed_of_sound,                 velocity             )
-    , ENTRY1( water, speed_of_sound,                 massic_enthalpy, pressure,        IAPWS_R7,  r7::speed_of_sound,                 velocity             )
-    , ENTRY1( water, speed_of_sound,                 massic_entropy,  massic_enthalpy, IAPWS_R7,  r7::speed_of_sound,                 velocity             )
-    , ENTRY1( water, speed_of_sound,                 massic_entropy,  pressure,        IAPWS_R7,  r7::speed_of_sound,                 velocity             )
-    , ENTRY1( water, speed_of_sound,                 pressure,        massic_enthalpy, IAPWS_R7,  r7::speed_of_sound,                 velocity             )
-    , ENTRY1( water, speed_of_sound,                 pressure,        massic_entropy,  IAPWS_R7,  r7::speed_of_sound,                 velocity             )
-    , ENTRY1( water, speed_of_sound,                 pressure,        temperature,     IAPWS_R7,  r7::speed_of_sound,                 velocity             )
-    , ENTRY1( water, speed_of_sound,                 temperature,     pressure,        IAPWS_R7,  r7::speed_of_sound,                 velocity             )
-    , ENTRY1( water, temperature,                    massic_enthalpy, massic_entropy,  IAPWS_R7,  r7::temperature,                    temperature          )
-    , ENTRY1( water, temperature,                    massic_enthalpy, pressure,        IAPWS_R7,  r7::temperature,                    temperature          )
-    , ENTRY1( water, temperature,                    massic_entropy,  massic_enthalpy, IAPWS_R7,  r7::temperature,                    temperature          )
-    , ENTRY1( water, temperature,                    massic_entropy,  pressure,        IAPWS_R7,  r7::temperature,                    temperature          )
-    , ENTRY1( water, temperature,                    pressure,        massic_enthalpy, IAPWS_R7,  r7::temperature,                    temperature          )
-    , ENTRY1( water, temperature,                    pressure,        massic_entropy,  IAPWS_R7,  r7::temperature,                    temperature          )
+      ENTRY2( air,   pressure,                       density,         temperature,     Clapeyron, ideal_gas_law_air::pressure                               )
+    , ENTRY2( air,   pressure,                       temperature,     density,         Clapeyron, ideal_gas_law_air::pressure                               )
+    , ENTRY2( air,   density,                        temperature,     pressure,        Clapeyron, ideal_gas_law_air::density                                )
+    , ENTRY2( air,   density,                        pressure,        temperature,     Clapeyron, ideal_gas_law_air::density                                )
+    , ENTRY2( water, pressure,                       density,         temperature,     IAPWS_R6,  r6::pressure                                              )
+    , ENTRY2( water, pressure,                       temperature,     density,         IAPWS_R6,  r6::pressure                                              )
+    , ENTRY1( water, massic_internal_energy,         density,         temperature,     IAPWS_R6,  r6::massic_internal_energy,         massic_energy         )
+    , ENTRY1( water, massic_internal_energy,         temperature,     density,         IAPWS_R6,  r6::massic_internal_energy,         massic_energy         )
+    , ENTRY2( water, massic_entropy,                 density,         temperature,     IAPWS_R6,  r6::massic_entropy                                        )
+    , ENTRY2( water, massic_entropy,                 temperature,     density,         IAPWS_R6,  r6::massic_entropy                                        )
+    , ENTRY1( water, massic_enthalpy,                density,         temperature,     IAPWS_R6,  r6::massic_enthalpy,                massic_energy         )
+    , ENTRY1( water, massic_enthalpy,                temperature,     density,         IAPWS_R6,  r6::massic_enthalpy,                massic_energy         )
+    , ENTRY1( water, massic_isochoric_heat_capacity, density,         temperature,     IAPWS_R6,  r6::massic_isochoric_heat_capacity, massic_heat_capacity  )
+    , ENTRY1( water, massic_isochoric_heat_capacity, temperature,     density,         IAPWS_R6,  r6::massic_isochoric_heat_capacity, massic_heat_capacity  )
+    , ENTRY1( water, massic_isobaric_heat_capacity,  density,         temperature,     IAPWS_R6,  r6::massic_isobaric_heat_capacity,  massic_heat_capacity  )
+    , ENTRY1( water, massic_isobaric_heat_capacity,  temperature,     density,         IAPWS_R6,  r6::massic_isobaric_heat_capacity,  massic_heat_capacity  )
+    , ENTRY1( water, massic_gibbs_free_energy,       density,         temperature,     IAPWS_R6,  r6::massic_gibbs_free_energy,       massic_energy         )
+    , ENTRY1( water, massic_gibbs_free_energy,       temperature,     density,         IAPWS_R6,  r6::massic_gibbs_free_energy,       massic_energy         )
+    , ENTRY1( water, speed_of_sound,                 density,         temperature,     IAPWS_R6,  r6::speed_of_sound,                 velocity              )
+    , ENTRY1( water, speed_of_sound,                 temperature,     density,         IAPWS_R6,  r6::speed_of_sound,                 velocity              )
+    , ENTRY1( water, density,                        massic_enthalpy, massic_entropy,  IAPWS_R7,  r7::density,                        density               )
+    , ENTRY1( water, density,                        massic_enthalpy, pressure,        IAPWS_R7,  r7::density,                        density               )
+    , ENTRY1( water, density,                        massic_entropy,  massic_enthalpy, IAPWS_R7,  r7::density,                        density               )
+    , ENTRY1( water, density,                        massic_entropy,  pressure,        IAPWS_R7,  r7::density,                        density               )
+    , ENTRY1( water, density,                        pressure,        massic_enthalpy, IAPWS_R7,  r7::density,                        density               )
+    , ENTRY1( water, density,                        pressure,        massic_entropy,  IAPWS_R7,  r7::density,                        density               )
+    , ENTRY1( water, density,                        pressure,        temperature,     IAPWS_R7,  r7::density,                        density               )
+    , ENTRY1( water, density,                        temperature,     pressure,        IAPWS_R7,  r7::density,                        density               )
+    , ENTRY1( water, massic_enthalpy,                massic_entropy,  pressure,        IAPWS_R7,  r7::massic_enthalpy,                massic_enthalpy       )
+    , ENTRY1( water, massic_enthalpy,                pressure,        massic_entropy,  IAPWS_R7,  r7::massic_enthalpy,                massic_enthalpy       )
+    , ENTRY1( water, massic_enthalpy,                pressure,        temperature,     IAPWS_R7,  r7::massic_enthalpy,                massic_enthalpy       )
+    , ENTRY1( water, massic_enthalpy,                temperature,     pressure,        IAPWS_R7,  r7::massic_enthalpy,                massic_enthalpy       )
+    , ENTRY1( water, massic_entropy,                 massic_enthalpy, pressure,        IAPWS_R7,  r7::massic_entropy,                 massic_entropy        )
+    , ENTRY1( water, massic_entropy,                 pressure,        massic_enthalpy, IAPWS_R7,  r7::massic_entropy,                 massic_entropy        )
+    , ENTRY1( water, massic_entropy,                 pressure,        temperature,     IAPWS_R7,  r7::massic_entropy,                 massic_entropy        )
+    , ENTRY1( water, massic_entropy,                 temperature,     pressure,        IAPWS_R7,  r7::massic_entropy,                 massic_entropy        )
+    , ENTRY1( water, massic_internal_energy,         massic_enthalpy, massic_entropy,  IAPWS_R7,  r7::massic_internal_energy,         massic_energy         )
+    , ENTRY1( water, massic_internal_energy,         massic_enthalpy, pressure,        IAPWS_R7,  r7::massic_internal_energy,         massic_energy         )
+    , ENTRY1( water, massic_internal_energy,         massic_entropy,  massic_enthalpy, IAPWS_R7,  r7::massic_internal_energy,         massic_energy         )
+    , ENTRY1( water, massic_internal_energy,         massic_entropy,  pressure,        IAPWS_R7,  r7::massic_internal_energy,         massic_energy         )
+    , ENTRY1( water, massic_internal_energy,         pressure,        massic_enthalpy, IAPWS_R7,  r7::massic_internal_energy,         massic_energy         )
+    , ENTRY1( water, massic_internal_energy,         pressure,        massic_entropy,  IAPWS_R7,  r7::massic_internal_energy,         massic_energy         )
+    , ENTRY1( water, massic_internal_energy,         pressure,        temperature,     IAPWS_R7,  r7::massic_internal_energy,         massic_energy         )
+    , ENTRY1( water, massic_internal_energy,         temperature,     pressure,        IAPWS_R7,  r7::massic_internal_energy,         massic_energy         )
+    , ENTRY1( water, massic_isobaric_heat_capacity,  massic_enthalpy, massic_entropy,  IAPWS_R7,  r7::massic_isobaric_heat_capacity,  massic_heat_capacity  )
+    , ENTRY1( water, massic_isobaric_heat_capacity,  massic_enthalpy, pressure,        IAPWS_R7,  r7::massic_isobaric_heat_capacity,  massic_heat_capacity  )
+    , ENTRY1( water, massic_isobaric_heat_capacity,  massic_entropy,  massic_enthalpy, IAPWS_R7,  r7::massic_isobaric_heat_capacity,  massic_heat_capacity  )
+    , ENTRY1( water, massic_isobaric_heat_capacity,  massic_entropy,  pressure,        IAPWS_R7,  r7::massic_isobaric_heat_capacity,  massic_heat_capacity  )
+    , ENTRY1( water, massic_isobaric_heat_capacity,  pressure,        massic_enthalpy, IAPWS_R7,  r7::massic_isobaric_heat_capacity,  massic_heat_capacity  )
+    , ENTRY1( water, massic_isobaric_heat_capacity,  pressure,        massic_entropy,  IAPWS_R7,  r7::massic_isobaric_heat_capacity,  massic_heat_capacity  )
+    , ENTRY1( water, massic_isobaric_heat_capacity,  pressure,        temperature,     IAPWS_R7,  r7::massic_isobaric_heat_capacity,  massic_heat_capacity  )
+    , ENTRY1( water, massic_isobaric_heat_capacity,  temperature,     pressure,        IAPWS_R7,  r7::massic_isobaric_heat_capacity,  massic_heat_capacity  )
+    , ENTRY1( water, massic_volume,                  massic_enthalpy, massic_entropy,  IAPWS_R7,  r7::massic_volume,                  massic_volume         )
+    , ENTRY1( water, massic_volume,                  massic_enthalpy, pressure,        IAPWS_R7,  r7::massic_volume,                  massic_volume         )
+    , ENTRY1( water, massic_volume,                  massic_entropy,  massic_enthalpy, IAPWS_R7,  r7::massic_volume,                  massic_volume         )
+    , ENTRY1( water, massic_volume,                  massic_entropy,  pressure,        IAPWS_R7,  r7::massic_volume,                  massic_volume         )
+    , ENTRY1( water, massic_volume,                  pressure,        massic_enthalpy, IAPWS_R7,  r7::massic_volume,                  massic_volume         )
+    , ENTRY1( water, massic_volume,                  pressure,        massic_entropy,  IAPWS_R7,  r7::massic_volume,                  massic_volume         )
+    , ENTRY1( water, massic_volume,                  pressure,        temperature,     IAPWS_R7,  r7::massic_volume,                  massic_volume         )
+    , ENTRY1( water, massic_volume,                  temperature,     pressure,        IAPWS_R7,  r7::massic_volume,                  massic_volume         )
+    , ENTRY1( water, pressure,                       massic_enthalpy, massic_entropy,  IAPWS_R7,  r7::pressure,                       pressure              )
+    , ENTRY1( water, pressure,                       massic_entropy,  massic_enthalpy, IAPWS_R7,  r7::pressure,                       pressure              )
+    , ENTRY1( water, speed_of_sound,                 massic_enthalpy, massic_entropy,  IAPWS_R7,  r7::speed_of_sound,                 velocity              )
+    , ENTRY1( water, speed_of_sound,                 massic_enthalpy, pressure,        IAPWS_R7,  r7::speed_of_sound,                 velocity              )
+    , ENTRY1( water, speed_of_sound,                 massic_entropy,  massic_enthalpy, IAPWS_R7,  r7::speed_of_sound,                 velocity              )
+    , ENTRY1( water, speed_of_sound,                 massic_entropy,  pressure,        IAPWS_R7,  r7::speed_of_sound,                 velocity              )
+    , ENTRY1( water, speed_of_sound,                 pressure,        massic_enthalpy, IAPWS_R7,  r7::speed_of_sound,                 velocity              )
+    , ENTRY1( water, speed_of_sound,                 pressure,        massic_entropy,  IAPWS_R7,  r7::speed_of_sound,                 velocity              )
+    , ENTRY1( water, speed_of_sound,                 pressure,        temperature,     IAPWS_R7,  r7::speed_of_sound,                 velocity              )
+    , ENTRY1( water, speed_of_sound,                 temperature,     pressure,        IAPWS_R7,  r7::speed_of_sound,                 velocity              )
+    , ENTRY1( water, temperature,                    massic_enthalpy, massic_entropy,  IAPWS_R7,  r7::temperature,                    temperature           )
+    , ENTRY1( water, temperature,                    massic_enthalpy, pressure,        IAPWS_R7,  r7::temperature,                    temperature           )
+    , ENTRY1( water, temperature,                    massic_entropy,  massic_enthalpy, IAPWS_R7,  r7::temperature,                    temperature           )
+    , ENTRY1( water, temperature,                    massic_entropy,  pressure,        IAPWS_R7,  r7::temperature,                    temperature           )
+    , ENTRY1( water, temperature,                    pressure,        massic_enthalpy, IAPWS_R7,  r7::temperature,                    temperature           )
+    , ENTRY1( water, temperature,                    pressure,        massic_entropy,  IAPWS_R7,  r7::temperature,                    temperature           )
+    , ENTRY1( iceIh, massic_enthalpy,                pressure,        temperature,     IAPWS_R10, r10::massic_enthalpy,               massic_enthalpy       )
+    , ENTRY1( iceIh, massic_helmholtz_energy,        pressure,        temperature,     IAPWS_R10, r10::massic_helmholtz_energy,       massic_energy         )
+    , ENTRY1( iceIh, massic_internal_energy,         pressure,        temperature,     IAPWS_R10, r10::massic_internal_energy,        massic_energy         )
+    , ENTRY1( iceIh, massic_entropy,                 pressure,        temperature,     IAPWS_R10, r10::massic_entropy,                massic_entropy        )
+    , ENTRY1( iceIh, massic_isobaric_heat_capacity,  pressure,        temperature,     IAPWS_R10, r10::massic_isobaric_heat_capacity, massic_heat_capacity  )
+    , ENTRY1( iceIh, density,                        pressure,        temperature,     IAPWS_R10, r10::density,                       density               )
+    /*
+    , ENTRY1( iceIh, cubic_expansion_coefficient,    pressure,        temperature,     IAPWS_R10, r10::cubic_expansion_coefficient,   expansion_coefficient )
+    , ENTRY1( iceIh, pressure_coefficient,           pressure,        temperature,     IAPWS_R10, r10::pressure_coefficient,          pressure_coefficient  )
+    , ENTRY1( iceIh, isothermal_compressibility,     pressure,        temperature,     IAPWS_R10, r10::isothermal_compressibility,    compressibility       )
+    , ENTRY1( iceIh, isentropic_compressibility,     pressure,        temperature,     IAPWS_R10, r10::isentropic_compressibility,    compressibility       )
+    */
+    , ENTRY1( iceIh, massic_enthalpy,                temperature,     pressure,        IAPWS_R10, r10::massic_enthalpy,               massic_enthalpy       )
+    , ENTRY1( iceIh, massic_helmholtz_energy,        temperature,     pressure,        IAPWS_R10, r10::massic_helmholtz_energy,       massic_energy         )
+    , ENTRY1( iceIh, massic_internal_energy,         temperature,     pressure,        IAPWS_R10, r10::massic_internal_energy,        massic_energy         )
+    , ENTRY1( iceIh, massic_entropy,                 temperature,     pressure,        IAPWS_R10, r10::massic_entropy,                massic_entropy        )
+    , ENTRY1( iceIh, massic_isobaric_heat_capacity,  temperature,     pressure,        IAPWS_R10, r10::massic_isobaric_heat_capacity, massic_heat_capacity  )
+    , ENTRY1( iceIh, density,                        temperature,     pressure,        IAPWS_R10, r10::density,                       density               )
+    /*
+    , ENTRY1( iceIh, cubic_expansion_coefficient,    temperature,     pressure,        IAPWS_R10, r10::cubic_expansion_coefficient,   expansion_coefficient )
+    , ENTRY1( iceIh, pressure_coefficient,           temperature,     pressure,        IAPWS_R10, r10::pressure_coefficient,          pressure_coefficient  )
+    , ENTRY1( iceIh, isothermal_compressibility,     temperature,     pressure,        IAPWS_R10, r10::isothermal_compressibility,    compressibility       )
+    , ENTRY1( iceIh, isentropic_compressibility,     temperature,     pressure,        IAPWS_R10, r10::isentropic_compressibility,    compressibility       )
+    */
 };
 #pragma GCC diagnostic pop
 #undef ENTRY1
 #undef ENTRY2
+
+    auto
+x = r10::cubic_expansion_coefficient <uv_t> (temperature_t <uv_t> {}, pressure_t <uv_t> {});
 
     static const auto
 property = property_t { map };
