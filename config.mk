@@ -16,6 +16,7 @@ DEPENDENCIES_HEADERS=                             \
 	../../external/isto/units/include             \
 	../../external/isto/hash_combine/include      \
 	../../external/isto/template_pow/include      \
+	../../external/isto/root_finding/include      \
 
 PROJECT=remote_services
 LINK.o=${LINK.cc}
