@@ -84,6 +84,7 @@ model_dois = std::unordered_map
     , { "IAPWS_R7",   value::array ({ "10.1115/1.483186", "10.1115/1.1915392", "10.1115/1.2181598", "10.1115/1.2719267", "10.1115/1.3028630" }) }
     , { "IAPWS_R10",  value::array ({ "10.1063/1.2183324" }) }
     , { "IAPWS_R12",  value::array ({ "10.1063/1.3088050" }) }
+    , { "IAPWS_R6_INVERSE",  value::array ({ "10.1063/1.1461829" }) }
 };
 
     template <class...> struct S;
