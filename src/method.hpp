@@ -1,6 +1,5 @@
 #pragma once
 #include <tao/json.hpp>
-    using namespace tao::json;
 #include <functional>
 #include <unordered_map>
 
@@ -9,6 +8,12 @@ json_t = tao::json::value;
     using 
 schema_t = json_t;
 
+/** A function that processes a request.
+ * Its input is JSON data that must conform to the method_t::expects schema, 
+ * it returns JSON data that conforms to the mthod_t::returns schema.
+ * It also has a method_t::title (a short description) and a mode detailled
+ * method_t::description. 
+ */
     struct
 method_t
 {
@@ -23,10 +28,8 @@ method_t
         std::string
     title = "";
 };
+
+/** A set of named methods.
+ */
     using
 method_table_t = std::unordered_map <std::string, method_t>;
-
-/*
-    using 
-schema_table_t = std::unordered_map <std::string, json_t>;
-*/

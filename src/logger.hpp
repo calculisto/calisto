@@ -7,7 +7,7 @@
     using 
 logger_t = std::shared_ptr <spdlog::logger>;
 
-    auto
+    inline auto
 make_logger (std::string const& name)
 {
     spdlog::set_pattern ("%C-%m-%d %T.%e %^%l%$ %n: %v");

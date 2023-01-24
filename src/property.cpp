@@ -36,8 +36,10 @@ function_t = uv_t (*) (uv_t const&, uv_t const&);
     struct
 function_entry_t
 {
-    function_t function;
-    dimension_t dimension;
+        function_t 
+    function;
+        dimension_t 
+    dimension;
         auto 
     operator<=>(function_entry_t const& e) const
     {
@@ -51,6 +53,8 @@ function_entry_t
     {
         return a.function == b.function;
     }
+        std::string
+    dimension_string;
 };
 
 
@@ -530,6 +534,9 @@ public:
         function_entry = function_entry_it->second;
         logger_m->info ("       {}", dimension::values_to_names.at (function_entry.dimension));
         logger_m->info ("       {}", unit::dimension_names_to_unit_names.at (dimension::values_to_names.at (function_entry.dimension)).size ());
+        // Return unit
+        // =====================================================================
+        /*
             auto const&
         uv = unit::dimension_names_to_unit_names.at (dimension::values_to_names.at (function_entry.dimension));
             auto const
@@ -537,6 +544,9 @@ public:
             ? base_unit_symbol (function_entry.dimension)
             : unit::names_to_symbols.at (uv[0])
         ;
+        */
+            auto const
+        r_u = units::unit_symbol (function_entry.dimension_string);
 
         // Arguments
         // =====================================================================
@@ -620,6 +630,7 @@ public:
     , {                                                                                 \
            FUNCTION <uv_t>                                                              \
         ,  dimension::DIMENSION                                                         \
+        ,  #DIMENSION                                                                   \
       }                                                                                 \
 }
 

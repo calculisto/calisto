@@ -1,5 +1,3 @@
-#FMTLIB_HEADERS=../../external/fmtlib/fmt/include
-#FMTLIB_LIBRARY=../../external/fmtlib/fmt/build
 DOCTEST_HEADERS=../../external/onqtam/doctest
 DEPENDENCIES_HEADERS=                             \
 	../../external/yhirose/cpp_httplib            \
