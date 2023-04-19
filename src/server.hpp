@@ -19,7 +19,7 @@ public:
     server_t (
           std::string address
         , int port
-        , int threads
+        , int /*threads*/
         , RequestProcessor& request_processor
     )
         : request_processor_m { request_processor }

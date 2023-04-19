@@ -24,6 +24,9 @@
 #include <isto/units/dimension_fmt.hpp>
     using fmt::format;
 
+    using namespace tao::json;
+    using namespace isto::remote_services;
+
 #include "property_disambiguate.hpp"
 
     namespace
@@ -70,13 +73,13 @@ map_t = multikey_multimap_t <
     using
 signature_t = map_t::key_type;
 
-    value
+    json_t
 signature_to_json (signature_t const& s)
 {
-    return value {
+    return json_t {
           { "substance",  std::get <0> (s) }
         , { "property",   std::get <1> (s) }
-        , { "conditions", value::array ({ std::get <2> (s).first, std::get <2> (s).second }) }
+        , { "conditions", json_t::array ({ std::get <2> (s).first, std::get <2> (s).second }) }
         , { "model",      std::get <3> (s) }
     };
 }
@@ -84,11 +87,11 @@ signature_to_json (signature_t const& s)
 model_dois = std::unordered_map
 {
         std::pair
-      { "IAPWS_R6"s,  value::array ({ "10.1063/1.1461829" }) }
-    , { "IAPWS_R7",   value::array ({ "10.1115/1.483186", "10.1115/1.1915392", "10.1115/1.2181598", "10.1115/1.2719267", "10.1115/1.3028630" }) }
-    , { "IAPWS_R10",  value::array ({ "10.1063/1.2183324" }) }
-    , { "IAPWS_R12",  value::array ({ "10.1063/1.3088050" }) }
-    , { "IAPWS_R6_INVERSE",  value::array ({ "10.1063/1.1461829" }) }
+      { "IAPWS_R6"s,  json_t::array ({ "10.1063/1.1461829" }) }
+    , { "IAPWS_R7",   json_t::array ({ "10.1115/1.483186", "10.1115/1.1915392", "10.1115/1.2181598", "10.1115/1.2719267", "10.1115/1.3028630" }) }
+    , { "IAPWS_R10",  json_t::array ({ "10.1063/1.2183324" }) }
+    , { "IAPWS_R12",  json_t::array ({ "10.1063/1.3088050" }) }
+    , { "IAPWS_R6_INVERSE",  json_t::array ({ "10.1063/1.1461829" }) }
 };
 
     template <class...> struct S;
@@ -109,21 +112,21 @@ private:
     conditions_m;
         std::set <std::string>
     models_m;
-        value
+        json_t
     substances_json_m;
-        value
+        json_t
     properties_json_m;
-        value
+        json_t
     conditions_json_m;
-        value
+        json_t
     models_json_m;
-        value
+        json_t
     prefixes_json_m;
-        value
+        json_t
     units_json_m;
-        value
+        json_t
     functions_json_m;
-        value
+        json_t
     property_units_m;
 public:
         explicit
@@ -144,26 +147,26 @@ public:
         logger_m->info ("There are {} properties", properties_m.size ());
         logger_m->info ("There are {} conditions", conditions_m.size ());
         logger_m->info ("There are {} models",     models_m.size ());
-        substances_json_m = value {{ "result", substances_m }};
-        substances_json_m = value {{ "result", substances_m }};
-        properties_json_m = value {{ "result", properties_m }};
-        conditions_json_m = value {{ "result", conditions_m }};
-        models_json_m     = value {{ "result", models_m }};
-            value
+        substances_json_m = json_t {{ "result", substances_m }};
+        substances_json_m = json_t {{ "result", substances_m }};
+        properties_json_m = json_t {{ "result", properties_m }};
+        conditions_json_m = json_t {{ "result", conditions_m }};
+        models_json_m     = json_t {{ "result", models_m }};
+            json_t
         tmp = empty_array;
         for (auto&& [symbol, name]: prefix::symbols_to_names)
         {
             tmp.push_back (symbol);
         }
         logger_m->info ("There are {} prefixes", tmp.get_array ().size ());
-        prefixes_json_m   = value {{ "result", std::move (tmp) }};
+        prefixes_json_m   = json_t {{ "result", std::move (tmp) }};
         tmp = empty_array;
         for (auto&& [symbol, name]: unit::symbols_to_names)
         {
             tmp.push_back (symbol);
         }
         logger_m->info ("There are {} units", tmp.get_array ().size ());
-        units_json_m   = value {{ "result", std::move (tmp) }};
+        units_json_m   = json_t {{ "result", std::move (tmp) }};
         tmp = empty_array;
         for (auto const& [k, v]: map)
         {
@@ -240,9 +243,9 @@ public:
         i = property_units_m.find (params.get_string ());
         if (i)
         {
-            return value {{ "result", *i }};
+            return json_t {{ "result", *i }};
         }
-        return value {{"error", { 
+        return json_t {{"error", { 
               { "code", 9 }
             , { "message", "No units for this property" }
         }}};
@@ -263,7 +266,7 @@ public:
             logger_m->info ("  specified substance: {}", *s);
             if (!map_m.contains <0> (*s))
             {
-                return value {{"error", { 
+                return json_t {{"error", { 
                       { "code", 7 }
                     , { "message", format ("unkown substance: {}", *s) }
                 }}};
@@ -281,7 +284,7 @@ public:
             logger_m->info ("  specified property: {}", *p);
             if (! map_m.contains <1> (*p))
             {
-                return value {{"error", { 
+                return json_t {{"error", { 
                       { "code", 7 }
                     , { "message", format ("unkown property: {}", *p) }
                 }}};
@@ -299,7 +302,7 @@ public:
             logger_m->info ("  specified model: {}", *m);
             if (! map_m.contains <3> (*m))
             {
-                return value {{"error", { 
+                return json_t {{"error", { 
                       { "code", 7 }
                     , { "message", format ("unkown model: {}", *m) }
                 }}};
@@ -321,7 +324,7 @@ public:
             logger_m->info ("  specified conditions: {}, {}", c1, c2);
             if (! map_m.contains <2> ({c1, c2}))
             {
-                return value {{"error", { 
+                return json_t {{"error", { 
                       { "code", 7 }
                     , { "message", format ("unkown conditions: {}, {}", c1, c2) }
                 }}};
@@ -338,7 +341,7 @@ public:
         map_m.select (std::back_inserter (r), s, p, c, m);
         logger_m->info ("  got {} matches", r.size ());
             auto
-        j = value ( empty_array );
+        j = json_t ( empty_array );
         for (auto&& e: r)
         {
             logger_m->info (
@@ -351,7 +354,7 @@ public:
             );
             j.push_back (signature_to_json (e->first));
         }
-        return value {{"result", j }};
+        return json_t {{"result", j }};
     }
 private:
         class
@@ -467,9 +470,9 @@ private:
         }
     public:
         magic_t (json_t const& json)
-            : v1_m { json.at (0).at ("value") }
+            : v1_m { json.at (0).at ("json_t") }
             , u1_m { get_uncertainty (json.at (0)) }
-            , v2_m { json.at (1).at ("value") }
+            , v2_m { json.at (1).at ("json_t") }
             , u2_m { get_uncertainty (json.at (1)) }
             , size_m { std::max (v1_m.size (), v2_m.size ()) }
         {
@@ -525,7 +528,7 @@ public:
         });
         if (function_entry_it == std::end (map_m))
         {
-            return value {{"error", { 
+            return json_t {{"error", { 
                   { "code", 9 }
                 , { "message", "Function no found" }
             }}};
@@ -556,7 +559,7 @@ public:
         uu1 = unit_parse_opt (u1);
         if (!uu1)
         {
-            return value {{"error", { 
+            return json_t {{"error", { 
                   { "code", 9 }
                 , { "message", "Can't parse first unit" }
                 , { "data", u1 }
@@ -564,7 +567,7 @@ public:
         }
         if (uu1->dimension != dimension::names_to_values.at (condition1))
         {
-            return value {{"error", { 
+            return json_t {{"error", { 
                   { "code", 9 }
                 , { "message", "First unit (" + u1 + ") is not a " + condition1 + " unit" }
                 , { "data", u1 }
@@ -576,7 +579,7 @@ public:
         uu2 = unit_parse_opt (u2);
         if (!uu2)
         {
-            return value {{"error", { 
+            return json_t {{"error", { 
                   { "code", 9 }
                 , { "message", "Can't parse second unit" }
                 , { "data", u2 }
@@ -584,7 +587,7 @@ public:
         }
         if (uu2->dimension != dimension::names_to_values.at (condition2))
         {
-            return value {{"error", { 
+            return json_t {{"error", { 
                   { "code", 9 }
                 , { "message", "Second unit (" + u2 + ") is not a " + condition2 + " unit" }
                 , { "data", u2 }
@@ -598,21 +601,21 @@ public:
             r = function_entry.function ((arg1 * *uu1).magnitude, (arg2 * *uu2).magnitude);
                 logger_m->info ("result: {}", r);
             ret.push_back ({
-                  { "value", r.value }
+                  { "json_t", r.value }
                 , { "uncertainty", r.uncertainty }
                 , { "unit", r_u }
             });
         }
         if (ret.get_array ().size () == 1)
         {
-            return value {{"result", ret[0]}, {"references", model_dois.at (model)}};
+            return json_t {{"result", ret[0]}, {"references", model_dois.at (model)}};
         }
-        return value {{"result", ret}, {"references", model_dois.at (model)}};
+        return json_t {{"result", ret}, {"references", model_dois.at (model)}};
     }
         auto
     get_references (json_t const& model) const
     {
-        return value {{ "result", model_dois.at (model.as <std::string> ()) }};
+        return json_t {{ "result", model_dois.at (model.as <std::string> ()) }};
     }
 }; // class property_t
 
@@ -764,7 +767,7 @@ property = property_t { map };
 {
     //schema_table_t
     schema_t
-schema_table = R"({
+module_schema = R"({
 "title": "The property module",
 "description": "Computes the physical properties of substances according to models.",
 "definitions":{"schemas": {"definitions": {
@@ -792,18 +795,18 @@ schema_table = R"({
     "argument":{
         "type": "object",
         "properties":{
-            "value":       { "oneOf": [{"type": "number"}, {"type": "array", "items": {"type":"number"}}] },
+            "json_t":       { "oneOf": [{"type": "number"}, {"type": "array", "items": {"type":"number"}}] },
             "uncertainty": { "oneOf": [{"type": "number"}, {"type": "array", "items": {"type":"number"}}] },
             "unit":        { "type": "string" }
         },
-        "required": [ "value", "unit" ],
+        "required": [ "json_t", "unit" ],
         "title": "argument",
         "description": "An argument to a function"
     }
 }}}
 })"_json;
-    method_table_t
-method_table = 
+    methods_t
+module_methods = 
 {{
     "test", 
     {
@@ -1010,7 +1013,7 @@ method_table =
 }};
 } // extern "C"
 
-// property/execute_function {"signature": {"substance":"air","property":"density","model":"Clapeyron","conditions":["pressure","temperature"]},"arguments":[{"value":1e5,"uncertainty":10,"unit":"Pa"},{"value":293,"unit":"K"}]}
+// property/execute_function {"signature": {"substance":"air","property":"density","model":"Clapeyron","conditions":["pressure","temperature"]},"arguments":[{"json_t":1e5,"uncertainty":10,"unit":"Pa"},{"json_t":293,"unit":"K"}]}
  
 
 // vim: fdm=marker

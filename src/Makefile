@@ -6,7 +6,7 @@ all: server property.so
 
 server: server.o
 
-server.o: server.cpp server.hpp logger.hpp request_processor.hpp module_manager.hpp
+server.o: server.cpp server.hpp logger.hpp request_processor.hpp module.hpp method.hpp
 
 schemas.hpp: ../data/*.json ../data/generate_header.sh
 	cd ../data; ./generate_header.sh

@@ -1,11 +1,10 @@
 #pragma once
 #include "logger.hpp"
-#include "module_manager.hpp"
+#include "module.hpp"
 #include "isto/json_validator/json_validator.hpp"
     using isto::json_validator::validator_t;    
 #include "schemas.hpp"
 #include <fmt/chrono.h>
-
 
     using namespace tao::json;
     using namespace std::literals;
@@ -18,20 +17,28 @@ isto::remote_services
     namespace 
 json_rpc_error
 {
-        const std::string
-    parse_error (){
+        inline auto
+    parse_error ()
+        -> std::string
+    {
         return R"({"jsonrpc":"2.0","error":{"code":-32700,"message":"Parse error. Invalid JSON was received by the server. An error occurred on the server while parsing the JSON text."}})";
     }
-        const std::string
-    parse_error (std::string const& details){
+        inline auto
+    parse_error (std::string const& details)
+        -> std::string
+    {
         return R"({"jsonrpc":"2.0","error":{"code":-32700,"message":"Parse error. Invalid JSON was received by the server. An error occurred on the server while parsing the JSON text.","data":")" + details + R"("}})";
     }
-        const std::string
-    internal_error (){
+        inline auto
+    internal_error ()
+        -> std::string
+    {
         return R"({"jsonrpc":"2.0","error":{"code":-32603,"message":"Internal error."}})";
     }
-        const std::string
-    internal_error (std::string const& details){
+        inline auto
+    internal_error (std::string const& details)
+        -> std::string
+    {
         return R"({"jsonrpc":"2.0","error":{"code":-32603,"message":"Internal error.","data":")" + details + R"("}})";
     }
 }
@@ -48,26 +55,26 @@ uri_rpc_response = "htpp://calcul-isto.cnrs-orleans.fr/schemas/json_rpc_response
     class
 request_processor_t
 {
+private:
         validator_t
     validator_m;
-        std::shared_ptr<spdlog::logger>
+        logger_t
     logger_m;
-        std::shared_ptr<spdlog::logger>
+        logger_t
     access_log_m;
         json_t
     schema_m = {
           { "title", "CALISTO: Remote Numerical Services of the Earth Science Institute of Orléans." }
         , { "description", "The CALISTO server accepts calculation requests, performs the calculation and sends back the result. "
-            "Requests and responses are exchanged usng the JSON-RPC protocol, version 2.0." 
-          }
+            "Requests and responses are exchanged usng the JSON-RPC protocol, version 2.0." }
     };
-        module_manager_t
-    module_manager_m;
+        modules_t
+    modules_m;
 
     //==================================================
     // Core module
-        method_table_t
-    method_table_m = 
+        methods_t
+    methods_m = 
     {{
         "test", 
         {
@@ -117,7 +124,7 @@ request_processor_t
             {
                     json_t
                 r = tao::json::empty_array;
-                for (auto const& m: module_manager_m.module_table ())
+                for (auto const& m: modules_m)
                 {
                     r.push_back (m.first);
                 }
@@ -141,8 +148,8 @@ request_processor_t
             , .function = [this]([[maybe_unused]] json_t const& module_name)-> json_t
               {
                     auto
-                module = module_manager_m.module_table ().find (module_name.as <std::string> ());
-                if (module == std::end (module_manager_m.module_table ()))
+                module = modules_m.find (module_name.as <std::string> ());
+                if (module == std::end (modules_m))
                 {
                     return {{
                         "error", {
@@ -154,7 +161,7 @@ request_processor_t
                 }
                     tao::json::value
                 r = tao::json::empty_array;
-                for (auto const& m: module->second.method_table ())
+                for (auto const& m: module->second.methods ())
                 {
                     r.push_back (m.first);
                 }
@@ -176,8 +183,8 @@ request_processor_t
     }};
 public:
     request_processor_t ()
-        : logger_m { spdlog::stdout_color_mt ("request_processor") }
-        , access_log_m { spdlog::rotating_logger_mt ("access", "access.log", 1024*1024*100, 10) }
+        : logger_m { make_logger ("request_processor") }
+        , access_log_m { make_logger_file("access", "access.log") }
     {
         logger_m->info ("Loading the RPC schemas...");
         validator_m.add_schema (
@@ -192,7 +199,7 @@ public:
         logger_m->info ("Loading the core module...");
         // core module
             auto
-        module = module_manager_m.load (CORE_MODULE_NAME, method_table_m);
+        module = modules_m.load (CORE_MODULE_NAME, methods_m);
         schema_m["definitions"][CORE_MODULE_NAME] = module.schema ();
         schema_m["definitions"][CORE_MODULE_NAME]["title"] = "The Core module";
         schema_m["definitions"][CORE_MODULE_NAME]["description"] 
@@ -202,12 +209,12 @@ public:
         modules_names = {
               "property"
         };
-        module_manager_m.add_path ("./");
+        modules_m.add_path ("./");
         for (auto&& module_name: modules_names)
         {
             logger_m->info ("Loading the {} module...", module_name);
                 auto
-            module = module_manager_m.load (module_name);
+            module = modules_m.load (module_name);
             schema_m["definitions"][module_name] = module.schema ();
         }
         logger_m->info ("Final schema is {}", schema_m);
@@ -218,7 +225,8 @@ public:
     }
 public:
         std::string
-    handle_post (std::string const& request, std::string const& remote_addr) noexcept
+    handle_post (std::string const& request, std::string const& remote_addr) 
+        noexcept (true)
     {
         // Catch-all, yields an internal error.
         try
@@ -246,7 +254,10 @@ public:
                   { "jsonrpc", "2.0" }
             };
                 auto
-            [is_valid, errors] = validator_m.validate (json, uri_rpc_notification_or_request);
+            [is_valid, errors] = validator_m.validate (
+                  json
+                , uri_rpc_notification_or_request
+            );
             if (!is_valid)
             {
                 response["error"] = {
@@ -287,8 +298,8 @@ public:
             logger_m->info ("Method is {}", method_name);
             // Get the module
                 auto
-            module = module_manager_m.module_table ().find (module_name);
-            if (module == std::end (module_manager_m.module_table ()))
+            mod = modules_m.find (module_name);
+            if (mod == std::end (modules_m))
             {
                 response["error"] = {
                       { "code", 1}
@@ -300,8 +311,8 @@ public:
             }
             // Get the method
                 auto
-            method = module->second.method_table ().find (method_name);
-            if (method == std::end (module->second.method_table ()))
+            method = mod->second.methods ().find (method_name);
+            if (method == std::end (mod->second.methods ()))
             {
                 response["error"] = {
                       { "code", 2}
@@ -365,7 +376,9 @@ public:
                 auto
             finish = std::chrono::system_clock::now ();
                 auto
-            duration = std::chrono::duration_cast <std::chrono::milliseconds>(finish - start);
+            duration = std::chrono::duration_cast <
+                std::chrono::milliseconds
+            >(finish - start);
             logger_m->info ("Processig took: {}", duration);
             return tao::json::to_string (response);
         }
@@ -384,12 +397,6 @@ public:
     handle_get (std::string const& request)
     {
         logger_m->info ("GET {}", request);
-        /*
-            namespace
-        fs = std::filesystem;
-            auto
-        p = fs::path (request);
-        */
         return R"(
             <!DOCTYPE html>
             <html lang="en">
@@ -398,11 +405,9 @@ public:
                 <title>ISTO Web services</title>
               </head>
               <body>
-              <p>Test.</p>
               </body>
             </html>
         )";
     }
 };
 } // namespace isto::remote_services
-

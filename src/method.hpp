@@ -8,6 +8,9 @@ json_t = tao::json::value;
     using 
 schema_t = json_t;
 
+    namespace
+isto::remote_services
+{
 /** A function that processes a request.
  * Its input is JSON data that must conform to the method_t::expects schema, 
  * it returns JSON data that conforms to the mthod_t::returns schema.
@@ -32,4 +35,5 @@ method_t
 /** A set of named methods.
  */
     using
-method_table_t = std::unordered_map <std::string, method_t>;
+methods_t = std::unordered_map <std::string, method_t>;
+} // namespace isto::remote_services
