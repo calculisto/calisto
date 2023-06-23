@@ -470,9 +470,9 @@ private:
         }
     public:
         magic_t (json_t const& json)
-            : v1_m { json.at (0).at ("json_t") }
+            : v1_m { json.at (0).at ("value") }
             , u1_m { get_uncertainty (json.at (0)) }
-            , v2_m { json.at (1).at ("json_t") }
+            , v2_m { json.at (1).at ("value") }
             , u2_m { get_uncertainty (json.at (1)) }
             , size_m { std::max (v1_m.size (), v2_m.size ()) }
         {
@@ -601,7 +601,7 @@ public:
             r = function_entry.function ((arg1 * *uu1).magnitude, (arg2 * *uu2).magnitude);
                 logger_m->info ("result: {}", r);
             ret.push_back ({
-                  { "json_t", r.value }
+                  { "value", r.value }
                 , { "uncertainty", r.uncertainty }
                 , { "unit", r_u }
             });
@@ -795,11 +795,11 @@ module_schema = R"({
     "argument":{
         "type": "object",
         "properties":{
-            "json_t":       { "oneOf": [{"type": "number"}, {"type": "array", "items": {"type":"number"}}] },
+            "value":       { "oneOf": [{"type": "number"}, {"type": "array", "items": {"type":"number"}}] },
             "uncertainty": { "oneOf": [{"type": "number"}, {"type": "array", "items": {"type":"number"}}] },
             "unit":        { "type": "string" }
         },
-        "required": [ "json_t", "unit" ],
+        "required": [ "value", "unit" ],
         "title": "argument",
         "description": "An argument to a function"
     }
@@ -1013,7 +1013,7 @@ module_methods =
 }};
 } // extern "C"
 
-// property/execute_function {"signature": {"substance":"air","property":"density","model":"Clapeyron","conditions":["pressure","temperature"]},"arguments":[{"json_t":1e5,"uncertainty":10,"unit":"Pa"},{"json_t":293,"unit":"K"}]}
+// property/execute_function {"signature": {"substance":"air","property":"density","model":"Clapeyron","conditions":["pressure","temperature"]},"arguments":[{"value":1e5,"uncertainty":10,"unit":"Pa"},{"value":293,"unit":"K"}]}
  
 
 // vim: fdm=marker
