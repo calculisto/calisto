@@ -620,21 +620,21 @@ public:
 }; // class property_t
 
 #define ENTRY(SUBSTANCE, PROPERTY, CONDITION1, CONDITION2, MODEL, FUNCTION, DIMENSION) \
-{                                                                                       \
-      {                                                                                 \
-          SUBSTANCE                                                                     \
-        , PROPERTY                                                                      \
-        , {                                                                             \
-              #CONDITION1                                                               \
-            , #CONDITION2                                                               \
-          }                                                                             \
-        , #MODEL                                                                        \
-      }                                                                                 \
-    , {                                                                                 \
-           FUNCTION <uv_t>                                                              \
-        ,  dimension::DIMENSION                                                         \
-        ,  #DIMENSION                                                                   \
-      }                                                                                 \
+{                                                                                      \
+      {                                                                                \
+          SUBSTANCE                                                                    \
+        , PROPERTY                                                                     \
+        , {                                                                            \
+              #CONDITION1                                                              \
+            , #CONDITION2                                                              \
+          }                                                                            \
+        , #MODEL                                                                       \
+      }                                                                                \
+    , {                                                                                \
+           FUNCTION <uv_t>                                                             \
+        ,  dimension::DIMENSION                                                        \
+        ,  #DIMENSION                                                                  \
+      }                                                                                \
 }
 
 

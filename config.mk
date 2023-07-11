@@ -1,4 +1,3 @@
-DOCTEST_HEADERS=../../external/onqtam/doctest
 DEPENDENCIES_HEADERS=                             \
 	../../external/yhirose/cpp_httplib            \
 	../../external/jarro2783/cxxopts/include      \
