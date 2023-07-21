@@ -1,0 +1,123 @@
+{
+    "header":"../../iapws/include/isto/iapws/r6.hpp",
+    "model": 
+    {
+        "name": "ISTO_IAPWS_R6",
+        "dois" : [ "10.1063/1.1461829" ]
+    },
+    "functions":
+    [
+        {
+            "function":"isto::iapws::r6::pressure_dt",
+            "substance":"water",
+            "property":"pressure",
+            "dimension": "pressure",
+            "conditions": ["density", "temperature"]
+        },
+        {
+            "function":"isto::iapws::r6::pressure_td",
+            "substance":"water",
+            "property":"pressure",
+            "dimension": "pressure",
+            "conditions": ["temperature", "density"]
+        },
+        {
+            "function":"isto::iapws::r6::massic_internal_energy_dt",
+            "substance":"water",
+            "property":"massic internal energy",
+            "dimension": "massic_energy",
+            "conditions": ["density", "temperature"]
+        },
+        {
+            "function":"isto::iapws::r6::massic_internal_energy_td",
+            "substance":"water",
+            "property":"massic internal energy",
+            "dimension": "massic_energy",
+            "conditions": ["temperature", "density"]
+        },
+        {
+            "function":"isto::iapws::r6::massic_entropy_dt",
+            "substance":"water",
+            "property":"massic entropy",
+            "dimension": "massic_entropy",
+            "conditions": ["density", "temperature"]
+        },
+        {
+            "function":"isto::iapws::r6::massic_entropy_td",
+            "substance":"water",
+            "property":"massic entropy",
+            "dimension": "massic_entropy",
+            "conditions": ["temperature", "density"]
+        },
+        {
+            "function":"isto::iapws::r6::massic_enthalpy_dt",
+            "substance":"water",
+            "property":"massic enthalpy",
+            "dimension": "massic_energy",
+            "conditions": ["density", "temperature"]
+        },
+        {
+            "function":"isto::iapws::r6::massic_enthalpy_td",
+            "substance":"water",
+            "property":"massic enthalpy",
+            "dimension": "massic_energy",
+            "conditions": ["temperature", "density"]
+        },
+        {
+            "function":"isto::iapws::r6::massic_isochoric_heat_capacity_dt",
+            "substance":"water",
+            "property":"massic isochoric heat capacity",
+            "dimension": "massic_heat_capacity",
+            "conditions": ["density", "temperature"]
+        },
+        {
+            "function":"isto::iapws::r6::massic_isochoric_heat_capacity_td",
+            "substance":"water",
+            "property":"massic isochoric heat capacity",
+            "dimension": "massic_heat_capacity",
+            "conditions": ["temperature", "density"]
+        },
+        {
+            "function":"isto::iapws::r6::massic_isobaric_heat_capacity_dt",
+            "substance":"water",
+            "property":"massic isobaric heat capacity",
+            "dimension": "massic_heat_capacity",
+            "conditions": ["density", "temperature"]
+        },
+        {
+            "function":"isto::iapws::r6::massic_isobaric_heat_capacity_td",
+            "substance":"water",
+            "property":"massic isobaric heat capacity",
+            "dimension": "massic_heat_capacity",
+            "conditions": ["temperature", "density"]
+        },
+        {
+            "function":"isto::iapws::r6::massic_gibbs_free_energy_dt",
+            "substance":"water",
+            "property":"massic gibbs free energy",
+            "dimension": "massic_energy",
+            "conditions": ["density", "temperature"]
+        },
+        {
+            "function":"isto::iapws::r6::massic_gibbs_free_energy_td",
+            "substance":"water",
+            "property":"massic gibbs free energy",
+            "dimension": "massic_energy",
+            "conditions": ["temperature", "density"]
+        },
+        {
+            "function":"isto::iapws::r6::speed_of_sound_dt",
+            "substance":"water",
+            "property":"speed of sound",
+            "dimension": "velocity",
+            "conditions": ["density", "temperature"]
+        },
+        {
+            "function":"isto::iapws::r6::speed_of_sound_td",
+            "substance":"water",
+            "property":"speed of sound",
+            "dimension": "velocity",
+            "conditions": ["temperature", "density"]
+        }
+    ]
+}

@@ -1,0 +1,26 @@
+{
+    "header":"./test_functions.hpp",
+    "model": 
+    {
+        "name": "ISTO_IAPWS_TEST_FUNCTIONS",
+        "dois" : []
+    },
+    "functions":
+    [
+        {
+            "function":"isto::remote_services::property::test_functions::add3",
+            "substance":"test",
+            "property":"temperature",
+            "dimension": "temperature",
+            "conditions": ["temperature", "pressure", "density"]
+        },
+        {
+            "function":"isto::remote_services::property::test_functions::add4",
+            "substance":"test",
+            "property":"massic enthalpy",
+            "dimension": "massic_energy",
+            "conditions": ["temperature", "pressure", "density", "velocity"]
+        }
+    ]
+}
+
