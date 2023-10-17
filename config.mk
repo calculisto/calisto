@@ -1,7 +1,6 @@
-DEPENDENCIES_HEADERS=                             \
+DEPENDENCIES_HEADERS=                           \
 	../../external/yhirose/cpp_httplib            \
 	../../external/jarro2783/cxxopts/include      \
-	../../external/gabime/spdlog/include          \
 	../../external/taocpp/pegtl/include           \
 	../../external/taocpp/json/include            \
 	../../external/isto/json_validator/include    \

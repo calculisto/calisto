@@ -29,32 +29,11 @@
             "conditions": ["massic enthalpy", "pressure"]
         },
         {
-            "function":"isto::iapws::r7::density_sh",
-            "substance":"water",
-            "property":"density",
-            "dimension": "density",
-            "conditions": ["massic entropy", "massic enthalpy"]
-        },
-        {
             "function":"isto::iapws::r7::density_sp",
             "substance":"water",
             "property":"density",
             "dimension": "density",
             "conditions": ["massic entropy", "pressure"]
-        },
-        {
-            "function":"isto::iapws::r7::density_ph",
-            "substance":"water",
-            "property":"density",
-            "dimension": "density",
-            "conditions": ["pressure", "massic enthalpy"]
-        },
-        {
-            "function":"isto::iapws::r7::density_ps",
-            "substance":"water",
-            "property":"density",
-            "dimension": "density",
-            "conditions": ["pressure", "massic entropy"]
         },
         {
             "function":"isto::iapws::r7::density_pt",
@@ -64,25 +43,11 @@
             "conditions": ["pressure", "temperature"]
         },
         {
-            "function":"isto::iapws::r7::density_tp",
-            "substance":"water",
-            "property":"density",
-            "dimension": "density",
-            "conditions": ["temperature", "pressure"]
-        },
-        {
             "function":"isto::iapws::r7::massic_enthalpy_sp",
             "substance":"water",
             "property":"massic enthalpy",
             "dimension": "massic_enthalpy",
             "conditions": ["massic entropy", "pressure"]
-        },
-        {
-            "function":"isto::iapws::r7::massic_enthalpy_ps",
-            "substance":"water",
-            "property":"massic enthalpy",
-            "dimension": "massic_enthalpy",
-            "conditions": ["pressure", "massic entropy"]
         },
         {
             "function":"isto::iapws::r7::massic_enthalpy_pt",
@@ -92,13 +57,6 @@
             "conditions": ["pressure", "temperature"]
         },
         {
-            "function":"isto::iapws::r7::massic_enthalpy_tp",
-            "substance":"water",
-            "property":"massic enthalpy",
-            "dimension": "massic_enthalpy",
-            "conditions": ["temperature", "pressure"]
-        },
-        {
             "function":"isto::iapws::r7::massic_entropy_hp",
             "substance":"water",
             "property":"massic entropy",
@@ -106,25 +64,11 @@
             "conditions": ["massic enthalpy", "pressure"]
         },
         {
-            "function":"isto::iapws::r7::massic_entropy_ph",
-            "substance":"water",
-            "property":"massic entropy",
-            "dimension": "massic_entropy",
-            "conditions": ["pressure", "massic enthalpy"]
-        },
-        {
             "function":"isto::iapws::r7::massic_entropy_pt",
             "substance":"water",
             "property":"massic entropy",
             "dimension": "massic_entropy",
             "conditions": ["pressure", "temperature"]
-        },
-        {
-            "function":"isto::iapws::r7::massic_entropy_tp",
-            "substance":"water",
-            "property":"massic entropy",
-            "dimension": "massic_entropy",
-            "conditions": ["temperature", "pressure"]
         },
         {
             "function":"isto::iapws::r7::massic_internal_energy_hs",
@@ -141,13 +85,6 @@
             "conditions": ["massic enthalpy", "pressure"]
         },
         {
-            "function":"isto::iapws::r7::massic_internal_energy_sh",
-            "substance":"water",
-            "property":"massic internal energy",
-            "dimension": "massic_energy",
-            "conditions": ["massic entropy", "massic enthalpy"]
-        },
-        {
             "function":"isto::iapws::r7::massic_internal_energy_sp",
             "substance":"water",
             "property":"massic internal energy",
@@ -155,32 +92,11 @@
             "conditions": ["massic entropy", "pressure"]
         },
         {
-            "function":"isto::iapws::r7::massic_internal_energy_ph",
-            "substance":"water",
-            "property":"massic internal energy",
-            "dimension": "massic_energy",
-            "conditions": ["pressure", "massic enthalpy"]
-        },
-        {
-            "function":"isto::iapws::r7::massic_internal_energy_ps",
-            "substance":"water",
-            "property":"massic internal energy",
-            "dimension": "massic_energy",
-            "conditions": ["pressure", "massic entropy"]
-        },
-        {
             "function":"isto::iapws::r7::massic_internal_energy_pt",
             "substance":"water",
             "property":"massic internal energy",
             "dimension": "massic_energy",
             "conditions": ["pressure", "temperature"]
-        },
-        {
-            "function":"isto::iapws::r7::massic_internal_energy_tp",
-            "substance":"water",
-            "property":"massic internal energy",
-            "dimension": "massic_energy",
-            "conditions": ["temperature", "pressure"]
         },
         {
             "function":"isto::iapws::r7::massic_isobaric_heat_capacity_hs",
@@ -197,13 +113,6 @@
             "conditions": ["massic enthalpy", "pressure"]
         },
         {
-            "function":"isto::iapws::r7::massic_isobaric_heat_capacity_sh",
-            "substance":"water",
-            "property":"massic isobaric heat capacity",
-            "dimension": "massic_heat_capacity",
-            "conditions": ["massic entropy", "massic enthalpy"]
-        },
-        {
             "function":"isto::iapws::r7::massic_isobaric_heat_capacity_sp",
             "substance":"water",
             "property":"massic isobaric heat capacity",
@@ -211,32 +120,11 @@
             "conditions": ["massic entropy", "pressure"]
         },
         {
-            "function":"isto::iapws::r7::massic_isobaric_heat_capacity_ph",
-            "substance":"water",
-            "property":"massic isobaric heat capacity",
-            "dimension": "massic_heat_capacity",
-            "conditions": ["pressure", "massic enthalpy"]
-        },
-        {
-            "function":"isto::iapws::r7::massic_isobaric_heat_capacity_ps",
-            "substance":"water",
-            "property":"massic isobaric heat capacity",
-            "dimension": "massic_heat_capacity",
-            "conditions": ["pressure", "massic entropy"]
-        },
-        {
             "function":"isto::iapws::r7::massic_isobaric_heat_capacity_pt",
             "substance":"water",
             "property":"massic isobaric heat capacity",
             "dimension": "massic_heat_capacity",
             "conditions": ["pressure", "temperature"]
-        },
-        {
-            "function":"isto::iapws::r7::massic_isobaric_heat_capacity_tp",
-            "substance":"water",
-            "property":"massic isobaric heat capacity",
-            "dimension": "massic_heat_capacity",
-            "conditions": ["temperature", "pressure"]
         },
         {
             "function":"isto::iapws::r7::massic_volume_hs",
@@ -253,32 +141,11 @@
             "conditions": ["massic enthalpy", "pressure"]
         },
         {
-            "function":"isto::iapws::r7::massic_volume_sh",
-            "substance":"water",
-            "property":"massic volume",
-            "dimension": "massic_volume",
-            "conditions": ["massic entropy", "massic enthalpy"]
-        },
-        {
             "function":"isto::iapws::r7::massic_volume_sp",
             "substance":"water",
             "property":"massic volume",
             "dimension": "massic_volume",
             "conditions": ["massic entropy", "pressure"]
-        },
-        {
-            "function":"isto::iapws::r7::massic_volume_ph",
-            "substance":"water",
-            "property":"massic volume",
-            "dimension": "massic_volume",
-            "conditions": ["pressure", "massic enthalpy"]
-        },
-        {
-            "function":"isto::iapws::r7::massic_volume_ps",
-            "substance":"water",
-            "property":"massic volume",
-            "dimension": "massic_volume",
-            "conditions": ["pressure", "massic entropy"]
         },
         {
             "function":"isto::iapws::r7::massic_volume_pt",
@@ -288,25 +155,11 @@
             "conditions": ["pressure", "temperature"]
         },
         {
-            "function":"isto::iapws::r7::massic_volume_tp",
-            "substance":"water",
-            "property":"massic volume",
-            "dimension": "massic_volume",
-            "conditions": ["temperature", "pressure"]
-        },
-        {
             "function":"isto::iapws::r7::pressure_hs",
             "substance":"water",
             "property":"pressure",
             "dimension": "pressure",
             "conditions": ["massic enthalpy", "massic entropy"]
-        },
-        {
-            "function":"isto::iapws::r7::pressure_sh",
-            "substance":"water",
-            "property":"pressure",
-            "dimension": "pressure",
-            "conditions": ["massic entropy", "massic enthalpy"]
         },
         {
             "function":"isto::iapws::r7::speed_of_sound_hs",
@@ -323,13 +176,6 @@
             "conditions": ["massic enthalpy", "pressure"]
         },
         {
-            "function":"isto::iapws::r7::speed_of_sound_sh",
-            "substance":"water",
-            "property":"speed of sound",
-            "dimension": "velocity",
-            "conditions": ["massic entropy", "massic enthalpy"]
-        },
-        {
             "function":"isto::iapws::r7::speed_of_sound_sp",
             "substance":"water",
             "property":"speed of sound",
@@ -337,32 +183,11 @@
             "conditions": ["massic entropy", "pressure"]
         },
         {
-            "function":"isto::iapws::r7::speed_of_sound_ph",
-            "substance":"water",
-            "property":"speed of sound",
-            "dimension": "velocity",
-            "conditions": ["pressure", "massic enthalpy"]
-        },
-        {
-            "function":"isto::iapws::r7::speed_of_sound_ps",
-            "substance":"water",
-            "property":"speed of sound",
-            "dimension": "velocity",
-            "conditions": ["pressure", "massic entropy"]
-        },
-        {
             "function":"isto::iapws::r7::speed_of_sound_pt",
             "substance":"water",
             "property":"speed of sound",
             "dimension": "velocity",
             "conditions": ["pressure", "temperature"]
-        },
-        {
-            "function":"isto::iapws::r7::speed_of_sound_tp",
-            "substance":"water",
-            "property":"speed of sound",
-            "dimension": "velocity",
-            "conditions": ["temperature", "pressure"]
         },
         {
             "function":"isto::iapws::r7::temperature_hs",
@@ -379,32 +204,11 @@
             "conditions": ["massic enthalpy", "pressure"]
         },
         {
-            "function":"isto::iapws::r7::temperature_sh",
-            "substance":"water",
-            "property":"temperature",
-            "dimension": "temperature",
-            "conditions": ["massic entropy", "massic enthalpy"]
-        },
-        {
             "function":"isto::iapws::r7::temperature_sp",
             "substance":"water",
             "property":"temperature",
             "dimension": "temperature",
             "conditions": ["massic entropy", "pressure"]
-        },
-        {
-            "function":"isto::iapws::r7::temperature_ph",
-            "substance":"water",
-            "property":"temperature",
-            "dimension": "temperature",
-            "conditions": ["pressure", "massic enthalpy"]
-        },
-        {
-            "function":"isto::iapws::r7::temperature_ps",
-            "substance":"water",
-            "property":"temperature",
-            "dimension": "temperature",
-            "conditions": ["pressure", "massic entropy"]
         }
     ]
 }

@@ -1,3 +1,4 @@
+#include <source_location>
 #include <string>
 #include <vector>
 #include <set>
@@ -9,10 +10,8 @@
     using isto::uncertain_value::uncertain_value_t;
 #include <isto/units/unit_parser.hpp>
     using namespace isto::units::dimension;
-    //using namespace isto::units;
     using isto::units::quantity_t;
     using isto::units::any_quantity_t;
-    //using namespace unit;
 #include <isto/uncertain_value/uncertain_value_fmt.hpp>
 #include <isto/units/dimension_fmt.hpp>
     using fmt::format;
@@ -78,6 +77,11 @@ function_entry_t
     {
         return reinterpret_cast <uv_t (*) (uv_t const&, uv_t const&, uv_t const&)> (function) (a, b, c);
     }
+        auto
+    apply4 (uv_t const& a, uv_t const& b, uv_t const& c, uv_t const& d) const
+    {
+        return reinterpret_cast <uv_t (*) (uv_t const&, uv_t const&, uv_t const&, uv_t const&)> (function) (a, b, c, d);
+    }
 };
 
     using
@@ -142,16 +146,31 @@ public:
     property_t ()
     {
         LOG->info ("Initializing...");
+            auto
+        bail_out = false;
         for (auto const& [k, v]: functions_map)
         {
             substances_m.insert (std::get <0> (k));
             properties_m.insert (std::get <1> (k));
+            // Check that the properties are sorted
+            if (!std::ranges::is_sorted (std::get <2> (k)))
+            {
+                LOG->error (
+                      "In function for {} of {} according to {}, conditions are not sorted: {}"
+                    , std::get <1> (k)
+                    , std::get <0> (k)
+                    , std::get <3> (k)
+                    , fmt::join (std::get <2> (k), ", ")
+                );
+                bail_out = true;
+            }
             for (const auto& c: std::get <2> (k))
             {
                 conditions_m.insert (c);
             }
             models_m.insert (std::get <3> (k));
         }
+        if (bail_out) throw std::runtime_error { "Initialization of property failed." };
         LOG->info ("There are {} substances", substances_m.size ());
         LOG->info ("There are {} properties", properties_m.size ());
         LOG->info ("There are {} conditions", conditions_m.size ());
@@ -378,20 +397,19 @@ private:
     iterable_t
     {
     public:
-        iterable_t (json_t const& json)
+        iterable_t (json_t const& json, double magnitude)
+            : magnitude_m { magnitude }
         {
             if (json.is_array ())
             {
                 is_array_m = true;
                 array_m = &(json.get_array ());
-                LOG->info ("Array of {} values", array_m->size ());
                 return;
             }
             is_array_m = false;
             if (json.is_number ())
             {
                 value_m = json.as <double> ();
-                LOG->info ("Scalar: {}", value_m);
                 return;
             }
             LOG->info ("Default (0.0)");
@@ -408,9 +426,19 @@ private:
         {
             if (is_array_m)
             {
-                return (*array_m)[index_m].get_double ();
+                switch ((*array_m)[index_m].type ())
+                {
+                    case type::SIGNED:
+                        return (*array_m)[index_m].get_signed () * magnitude_m;
+                    case type::UNSIGNED:
+                        return (*array_m)[index_m].get_unsigned () * magnitude_m;
+                    case type::DOUBLE:
+                        return (*array_m)[index_m].get_double () * magnitude_m;
+                    default:
+                        throw std::runtime_error { format ("Internal error {}", std::source_location::current ().line ())};
+                };
             }
-            return value_m;
+            return value_m * magnitude_m;
         }
             auto
         size () const
@@ -431,6 +459,8 @@ private:
         array_m;
             double
         value_m;
+            double
+        magnitude_m;
     };
     /* Takes an array of array and iterate over the inner arrays.
      */
@@ -497,31 +527,33 @@ private:
                 return def;
         }
     public:
-        magic_t (std::vector <json_t> const& arguments)
+        magic_t (std::vector <std::pair <json_t, double>> const& arguments)
         {
-                bool
-            first = true;
+            size_m = 0;
             for (const auto& a: arguments)
             {
-                v_m.emplace_back (a.at ("value"));
-                u_m.emplace_back (get_uncertainty (a));
-                if (first)
+                v_m.emplace_back (a.first.at ("value"), a.second);
+                    const auto
+                s = v_m.back ().size ();
+                LOG->info ("  size: {}", s);
+                u_m.emplace_back (get_uncertainty (a.first), a.second);
+                if (u_m.back ().size () != 1 && u_m.back ().size () != s)
                 {
-                    size_m = v_m.back ().size ();
-                    if (size_m == 0)
-                    {
-                        // TODO
-                    }
+                    throw std::runtime_error { format ("Internal error {}", std::source_location::current ().line ())};
+                }
+                if (size_m == 0) 
+                {
+                    size_m = s;
                     continue;
                 }
-                if (v_m.size () != size_m)
+                if (s != size_m && s == 1) continue;
+                if (s > size_m && size_m == 1) 
                 {
-                    // TODO
+                    size_m = s;
+                    continue;
                 }
-                if (u_m.size () != 1 && u_m.size () != size_m)
-                {
-                    // TODO
-                }
+                if (s == size_m) continue;
+                throw std::runtime_error { format ("Internal error {}", std::source_location::current ().line ())};
             }
             LOG->info ("There are {} values", size_m);
         }
@@ -567,6 +599,7 @@ public:
             {
                 r.push_back (i.get_string ());
             }
+            std::ranges::sort (r);
             return r;
         }();
             const auto&
@@ -611,26 +644,28 @@ public:
         // Arguments
         // =====================================================================
             const auto&
-        arguments = params.at ("arguments").get_array ();
-        if (arguments.size () != function_entry.arity)
-        {
-            return json_t {{"error", { 
-                  { "code", 9 }
-                , { "message", "Invalid number of arguments." }
-                , { "data", { 
-                      { "got", params.at ("arguments").get_array ().size () }
-                    , { "required", function_entry.arity } }
-                  }
-            }}};
-        }
+        argument_obj = params.at ("arguments");
+            auto
+        arguments = std::vector <std::pair <json_t, double>> {};
         for (auto i = 0u; i < function_entry.arity; ++i)
         {
                 const auto&
             condition = conditions[i];
+            LOG->info ("Looking for {}", condition);
+                auto 
+            v = argument_obj.find (condition);
+            if (v == nullptr)
+            {
+                return json_t {{"error", { 
+                      { "code", 9 }
+                    , { 
+                          "message"
+                        , fmt::format ("Missing argument: {}.", condition) 
+                      }
+                }}};
+            }
                 const auto&
-            argument = arguments[i];
-                const auto&
-            u = argument.at ("unit").get_string ();;
+            u = v->at ("unit").get_string ();;
                 const auto
             uu = units::unit_parse_opt (u);
             if (!uu)
@@ -650,41 +685,79 @@ public:
                     , { "data", u }
                 }}};
             }
+            /*
+            LOG->info ("  found a {}", to_string (v->type ()));
+            for (auto&& [k, v]: v->get_object ())
+            {
+                LOG->info ("    {}, {}", k, to_string (v));
+            }
+            */
+            arguments.push_back ({ std::move (*v), uu->magnitude });
         }
-
+        /*
+        for (auto i = 0; auto&& e: arguments)
+        {
+            LOG->info ("argument {}: {}", i, to_string (e.type ()));
+            for (auto&& [k, v]: e.get_object ())
+            {
+                LOG->info ("  {}: {}", k, to_string (v.type ()));
+            }
+            ++i;
+        }
+        */
         // Execution
         // =====================================================================
             json_t
         ret = tao::json::empty_array;
         for (const auto& args: magic_t (arguments))
         {
-                auto
-            r = uv_t {};
-            switch (function_entry.arity)
+            try
             {
-                case 0:
-                    r = function_entry.apply0 ();
-                    break;
-                case 1:
-                    r = function_entry.apply1 (args[0]);
-                    break;
-                case 2:
-                    r = function_entry.apply2 (args[0], args[1]);
-                    break;
-                case 3:
-                    r = function_entry.apply3 (args[0], args[1], args[2]);
-                    break;
-                default:
-                    return json_t {{"error", { 
-                          { "code", 9 }
-                        , { "message", "Not implemented: too many arguments." }
-                    }}};
+                    auto
+                r = uv_t {};
+                switch (function_entry.arity)
+                {
+                    case 0:
+                        r = function_entry.apply0 ();
+                        break;
+                    case 1:
+                        r = function_entry.apply1 (args[0]);
+                        break;
+                    case 2:
+                        r = function_entry.apply2 (args[0], args[1]);
+                        break;
+                    case 3:
+                        r = function_entry.apply3 (args[0], args[1], args[2]);
+                        break;
+                    case 4:
+                        r = function_entry.apply4 (args[0], args[1], args[2], args[3]);
+                        break;
+                    default:
+                        return json_t {{"error", { 
+                              { "code", 9 }
+                            , { "message", "Not implemented: too many arguments." }
+                        }}};
+                }
+                ret.push_back ({
+                      { "value", r.value }
+                    , { "uncertainty", r.uncertainty }
+                    , { "unit", r_u }
+                });
             }
-            ret.push_back ({
-                  { "value", r.value }
-                , { "uncertainty", r.uncertainty }
-                , { "unit", r_u }
-            });
+            catch (std::exception const& e)
+            {
+                LOG->error ("Internal error: {}", e.what ());
+                ret.push_back ({
+                      { "error", e.what () }
+                });
+            }
+            catch (...)
+            {
+                LOG->error ("Internal error");
+                ret.push_back ({
+                      { "error", "(unspecified)" }
+                });
+            }
         }
         if (ret.get_array ().size () == 1)
         {
@@ -719,7 +792,7 @@ module_schema = R"({
             "substance":  { "type": "string" },
             "property":   { "type": "string" },
             "model":      { "type": "string" },
-            "conditions": { "type": "array", "items": { "type": "string"}, "minItems": 2, "maxItems": 2}
+            "conditions": { "type": "array", "items": { "type": "string"}}
         },
         "required": [ "substance", "property", "model", "conditions" ],
         "title": "function signature",
@@ -731,14 +804,14 @@ module_schema = R"({
             "substance":  { "type": "string" },
             "property":   { "type": "string" },
             "model":      { "type": "string" },
-            "conditions": { "type": "array", "items": { "type": "string"}, "maxItems": 2, "minItems": 2}
+            "conditions": { "type": "array", "items": { "type": "string"}}
         }
     },
     "argument":{
         "type": "object",
         "properties":{
-            "value":       { "oneOf": [{"type": "number"}, {"type": "array", "items": {"type":"number"}}] },
-            "uncertainty": { "oneOf": [{"type": "number"}, {"type": "array", "items": {"type":"number"}}] },
+            "value":       { "oneOf": [{"type": "number"}, {"type": "array", "items": {"type": "number"}, "minItems": 1}] },
+            "uncertainty": { "oneOf": [{"type": "number"}, {"type": "array", "items": {"type": "number"}}] },
             "unit":        { "type": "string" }
         },
         "required": [ "value", "unit" ],
@@ -921,10 +994,8 @@ module_methods =
               {
                   "signature": { "$ref": "#/definitions/property/definitions/schemas/definitions/signature" }
                 , "arguments": {
-                      "type": "array"
-                    , "items": { "$ref": "#/definitions/property/definitions/schemas/definitions/argument" }
-                    , "minItems": 2
-                    , "maxItems": 2
+                      "type": "object"
+                    , "additionalProperties": { "$ref": "#/definitions/property/definitions/schemas/definitions/argument" }
                   }
               }
             , "required": ["signature", "arguments"]

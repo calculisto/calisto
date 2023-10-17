@@ -12,14 +12,23 @@
             "substance":"test",
             "property":"temperature",
             "dimension": "temperature",
-            "conditions": ["temperature", "pressure", "density"]
+            "conditions": [
+                "density",
+                "pressure", 
+                "temperature"
+            ]
         },
         {
             "function":"isto::remote_services::property::test_functions::add4",
             "substance":"test",
             "property":"massic enthalpy",
             "dimension": "massic_energy",
-            "conditions": ["temperature", "pressure", "density", "velocity"]
+            "conditions": [
+                "density", 
+                "pressure", 
+                "temperature", 
+                "velocity"
+            ]
         }
     ]
 }

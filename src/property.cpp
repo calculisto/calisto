@@ -268,7 +268,7 @@ public:
             {
                 return json_t {{"error", { 
                       { "code", 7 }
-                    , { "message", format ("unkown substance: {}", *s) }
+                    , { "message", fmt::format ("unkown substance: {}", *s) }
                 }}};
             }
         }
@@ -286,7 +286,7 @@ public:
             {
                 return json_t {{"error", { 
                       { "code", 7 }
-                    , { "message", format ("unkown property: {}", *p) }
+                    , { "message", fmt::format ("unkown property: {}", *p) }
                 }}};
             }
         }
@@ -304,7 +304,7 @@ public:
             {
                 return json_t {{"error", { 
                       { "code", 7 }
-                    , { "message", format ("unkown model: {}", *m) }
+                    , { "message", fmt::format ("unkown model: {}", *m) }
                 }}};
             }
         }
@@ -326,7 +326,7 @@ public:
             {
                 return json_t {{"error", { 
                       { "code", 7 }
-                    , { "message", format ("unkown conditions: {}, {}", c1, c2) }
+                    , { "message", fmt::format ("unkown conditions: {}, {}", c1, c2) }
                 }}};
             }
             c = { c1, c2 };

@@ -21,7 +21,7 @@ submit ()
     cond2u=$9
     expected=$(number "${10}")
 
-    request='{"jsonrpc":"2.0","id":'$RANDOM',"method":"property/execute_function","params":{"signature": {"substance":"'$substance'","property":"'$property'","model":"'$model'","conditions":["'$cond1'","'$cond2'"]},"arguments":[{"value":'$cond1v',"unit":"'$cond1u'"},{"value":'$cond2v',"unit":"'$cond2u'"}]}}'
+    request='{"jsonrpc":"2.0","id":'$RANDOM',"method":"property/execute_function","params":{"signature": {"substance":"'$substance'","property":"'$property'","model":"'$model'","conditions":["'$cond1'","'$cond2'"]},"arguments":{"'$cond1'":{"value":'$cond1v',"unit":"'$cond1u'"},"'$cond2'":{"value":'$cond2v',"unit":"'$cond2u'"}}}}'
     response=$(curl -s http://127.0.0.1:7326 -d "$request")
     failed=$(echo $response | jq .error.message)
     if [[ "$failed" != "null" ]] 
@@ -58,6 +58,8 @@ submit  water  pressure  ISTO_IAPWS_R6  temperature  647.0  K  density  0.358000
 submit  water  pressure  ISTO_IAPWS_R6  temperature  900.0  K  density  0.2410000    kg.m-3  "0.100062559    * 1e6"
 submit  water  pressure  ISTO_IAPWS_R6  temperature  900.0  K  density  0.5261500e2  kg.m-3  "0.200000690e2  * 1e6"
 submit  water  pressure  ISTO_IAPWS_R6  temperature  900.0  K  density  0.8707690e3  kg.m-3  "0.700000006e3  * 1e6"
+
+submit  water  pressure  ISTO_IAPWS_R6  temperature  900.0  K  density  0.8707690e6   g.m-3  "0.700000006e3  * 1e6"
 
 kill -s SIGTERM $SERVER_PID
 exit 0
