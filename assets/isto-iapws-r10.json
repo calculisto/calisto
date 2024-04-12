@@ -1,0 +1,81 @@
+{
+    "header":"../../iapws/include/isto/iapws/r10.hpp",
+    "model": 
+    {
+        "name": "ISTO_IAPWS_R10",
+        "dois" : [ "10.1063/1.2183324" ]
+    },
+    "functions":
+    [
+        {
+            "function":"isto::iapws::r10::massic_enthalpy_pt",
+            "substance":"ice_Ih",
+            "property":"massic_enthalpy",
+            "dimension": "massic_enthalpy",
+            "conditions": ["pressure", "temperature"]
+        },
+        {
+            "function":"isto::iapws::r10::massic_helmholtz_energy_pt",
+            "substance":"ice_Ih",
+            "property":"massic_helmholtz_energy",
+            "dimension": "massic_energy",
+            "conditions": ["pressure", "temperature"]
+        },
+        {
+            "function":"isto::iapws::r10::massic_internal_energy_pt",
+            "substance":"ice_Ih",
+            "property":"massic_internal_energy",
+            "dimension": "massic_energy",
+            "conditions": ["pressure", "temperature"]
+        },
+        {
+            "function":"isto::iapws::r10::massic_entropy_pt",
+            "substance":"ice_Ih",
+            "property":"massic_entropy",
+            "dimension": "massic_entropy",
+            "conditions": ["pressure", "temperature"]
+        },
+        {
+            "function":"isto::iapws::r10::massic_isobaric_heat_capacity_pt",
+            "substance":"ice_Ih",
+            "property":"massic_isobaric_heat_capacity",
+            "dimension": "massic_heat_capacity",
+            "conditions": ["pressure", "temperature"]
+        },
+        {
+            "function":"isto::iapws::r10::density_pt",
+            "substance":"ice_Ih",
+            "property":"density",
+            "dimension": "density",
+            "conditions": ["pressure", "temperature"]
+        },
+        {
+            "function":"isto::iapws::r10::cubic_expansion_coefficient_pt",
+            "substance":"ice_Ih",
+            "property":"cubic_expansion_coefficient",
+            "dimension": "thermal_expansion",
+            "conditions": ["pressure", "temperature"]
+        },
+        {
+            "function":"isto::iapws::r10::pressure_coefficient_pt",
+            "substance":"ice_Ih",
+            "property":"pressure_coefficient",
+            "dimension": "pressure_coefficient",
+            "conditions": ["pressure", "temperature"]
+        },
+        {
+            "function":"isto::iapws::r10::isothermal_compressibility_pt",
+            "substance":"ice_Ih",
+            "property":"isothermal_compressibility",
+            "dimension": "compressibility",
+            "conditions": ["pressure", "temperature"]
+        },
+        {
+            "function":"isto::iapws::r10::isentropic_compressibility_pt",
+            "substance":"ice_Ih",
+            "property":"isentropic_compressibility",
+            "dimension": "compressibility",
+            "conditions": ["pressure", "temperature"]
+        }
+    ]
+}

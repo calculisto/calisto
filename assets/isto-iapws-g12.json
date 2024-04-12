@@ -1,0 +1,74 @@
+{
+    "header":"../../iapws/include/isto/iapws/g12.hpp",
+    "model": 
+    {
+        "name": "ISTO_IAPWS_G12",
+        "dois" : [ "10.1063/1.4895593" ]
+    },
+    "functions":
+    [
+        {
+            "function":"isto::iapws::g12::massic_volume_pt",
+            "substance":"supercooled_water",
+            "property":"massic_volume",
+            "dimension": "massic_volume",
+            "conditions": ["pressure", "temperature"]
+        },
+        {
+            "function":"isto::iapws::g12::density_pt",
+            "substance":"supercooled_water",
+            "property":"density",
+            "dimension": "density",
+            "conditions": ["pressure", "temperature"]
+        },
+        {
+            "function":"isto::iapws::g12::massic_entropy_pt",
+            "substance":"supercooled_water",
+            "property":"massic_entropy",
+            "dimension": "massic_entropy",
+            "conditions": ["pressure", "temperature"]
+        },
+        {
+            "function":"isto::iapws::g12::isothermal_compressibility_pt",
+            "substance":"supercooled_water",
+            "property":"isothermal_compressibility",
+            "dimension": "compressibility",
+            "conditions": ["pressure", "temperature"]
+        },
+        {
+            "function":"isto::iapws::g12::thermal_expansion_coefficient_pt",
+            "substance":"supercooled_water",
+            "property":"thermal_expansion_coefficient",
+            "dimension": "thermal_expansion",
+            "conditions": ["pressure", "temperature"]
+        },
+        {
+            "function":"isto::iapws::g12::massic_isobaric_heat_capacity_pt",
+            "substance":"supercooled_water",
+            "property":"massic_isobaric_heat_capacity",
+            "dimension": "massic_heat_capacity",
+            "conditions": ["pressure", "temperature"]
+        },
+        {
+            "function":"isto::iapws::g12::massic_isochoric_heat_capacity_pt",
+            "substance":"supercooled_water",
+            "property":"massic_isochoric_heat_capacity",
+            "dimension": "massic_heat_capacity",
+            "conditions": ["pressure", "temperature"]
+        },
+        {
+            "function":"isto::iapws::g12::speed_of_sound_pt",
+            "substance":"supercooled_water",
+            "property":"speed_of_sound",
+            "dimension": "velocity",
+            "conditions": ["pressure", "temperature"]
+        }
+    ]
+}
+
+
+
+
+
+
+

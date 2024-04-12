@@ -181,7 +181,7 @@ main (int argc, char** argv)
 
     {
             const auto
-        fn_out = std::filesystem::path { "map_data.inc" };
+        fn_out = std::filesystem::path { "module_property_map_data.inc" };
         if (exists (fn_out))
         {
             // TODO: bail out
@@ -202,7 +202,7 @@ main (int argc, char** argv)
     }
     {
             const auto
-        fn_out = std::filesystem::path { "map_headers.inc" };
+        fn_out = std::filesystem::path { "module_property_map_headers.inc" };
         if (exists (fn_out))
         {
             // TODO: bail out

@@ -4,6 +4,7 @@ CXXFLAGS+=                                           \
   -std=c++20                                         \
   -Wall                                              \
   -Wextra                                            \
+  -g                                                 \
 	-I../git_submodules/taocpp/pegtl/include           \
 	-I../git_submodules/taocpp/json/include            \
 	-I../git_submodules/gabime/spdlog/include          \

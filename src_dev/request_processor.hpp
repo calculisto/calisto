@@ -207,7 +207,7 @@ public:
         // The other modules
             const std::vector <std::string>
         modules_names = {
-              "property"
+              "module_property"
         };
         modules_m.add_path ("./");
         for (auto&& module_name: modules_names)
