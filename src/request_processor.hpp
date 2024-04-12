@@ -184,7 +184,7 @@ private:
 public:
     request_processor_t ()
         : logger_m { make_logger ("request_processor") }
-        , access_log_m { make_logger_file("access", "access.log") }
+        , access_log_m { make_logger_file ("access", "access.log") }
     {
         logger_m->info ("Loading the RPC schemas...");
         validator_m.add_schema (
@@ -207,9 +207,8 @@ public:
         // The other modules
             const std::vector <std::string>
         modules_names = {
-              "property"
+              "module_property"
         };
-        modules_m.add_path ("./");
         for (auto&& module_name: modules_names)
         {
             logger_m->info ("Loading the {} module...", module_name);
@@ -234,6 +233,7 @@ public:
                 auto
             start = std::chrono::system_clock::now ();
             logger_m->info ("Got request from {}: {}", remote_addr, request);
+            access_log_m->info ("{} {}", remote_addr, request);
             // TODO Notifications.
                 json_t
             json;
@@ -291,7 +291,7 @@ public:
                   s = qualified_method_name.rfind ('/')
                 ; s != std::string::npos 
             ){
-                module_name = qualified_method_name.substr (0, s);
+                module_name = "module_" + qualified_method_name.substr (0, s);
                 method_name = qualified_method_name.substr (s+1);
             }
             logger_m->info ("Module is {}", module_name);

@@ -1,23 +1,8 @@
-include ../config.mk
+.PHONY: all check clean
 
-CXXFLAGS+=-I../${DOCTEST_HEADERS}
+check:
+	./test.sh
 
-.PHONY: all clean check
+clean:
+	rm -fr *.log
 
-all: check
-
-check: tests
-	./tests
-
-SRC = $(wildcard test_*.cpp)
-OBJ = $(subst .cpp,.o, $(SRC))
-
-tests: tests.o $(OBJ) 
-
-SEPARATOR=+
-NAMES = $(subst test_,,$(basename $(SRC)))
-TEMPLATE = $(join test_, $(1)).o: $(join test_, $(1)).cpp $(foreach h, $(subst $(SEPARATOR), ,$(1)), $(join ../include/isto/${PROJECT}/, $(h)).hpp)
-$(foreach name, $(NAMES), $(eval $(call TEMPLATE,$(name))))
-
-clean: 
-	rm -f tests *.o 

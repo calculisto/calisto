@@ -135,13 +135,6 @@ public:
     {
         return map_m.find (name);
     }
-    /** Add a path to the set of search paths.
-     */
-        auto
-    add_path (std::filesystem::path const& path)
-    {
-        paths_m.push_back (path);
-    }
     /** Load a module from a shared object.
      */
         auto const&
@@ -159,26 +152,19 @@ public:
             auto 
         file = std::filesystem::path { name };
         file.replace_extension (".so");
-        for (auto const& directory: paths_m)
+        dlerror ();
+            auto
+        module_handle = dlopen (file.c_str (), RTLD_LAZY);
+        if (!module_handle)
         {
-            if (auto path = directory / file; exists (path))
-            {
-                dlerror ();
-                    auto
-                module_handle = dlopen (path.c_str (), RTLD_LAZY);
-                if (!module_handle)
-                {
-                    throw std::runtime_error (dlerror ());
-                }
-                    auto
-                [ iterator, dummy] = map_m.emplace (
-                      name
-                    , module_t { name,  module_handle }
-                );
-                return iterator->second;
-            }
+            throw std::runtime_error (dlerror ());
         }
-        throw std::runtime_error ("Module file not found: "s + file.string ());
+            auto
+        [ iterator, dummy] = map_m.emplace (
+              name
+            , module_t { name,  module_handle }
+        );
+        return iterator->second;
     }
     /** Load a module from a set of named methods.
      */
@@ -201,8 +187,6 @@ public:
         return iterator->second;
     }
 private:
-        std::vector <std::filesystem::path>
-    paths_m;
         using
     map_t = std::unordered_map <std::string, module_t>;
         map_t
