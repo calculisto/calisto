@@ -1,4 +1,5 @@
 #pragma once
+#define SPDLOG_FMT_EXTERNAL
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/rotating_file_sink.h>

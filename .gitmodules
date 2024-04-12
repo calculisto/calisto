@@ -1,0 +1,39 @@
+[submodule "git_submodules/isto/array"]
+	path = git_submodules/isto/array
+	url = https://github.com/calculisto/array
+[submodule "git_submodules/isto/uncertain_value"]
+	path = git_submodules/isto/uncertain_value
+	url = https://github.com/calculisto/uncertain_value
+[submodule "git_submodules/isto/iapws"]
+	path = git_submodules/isto/iapws
+	url = https://github.com/calculisto/iapws
+[submodule "git_submodules/isto/units"]
+	path = git_submodules/isto/units
+	url = https://github.com/calculisto/units
+[submodule "git_submodules/isto/json_validator"]
+	path = git_submodules/isto/json_validator
+	url = https://github.com/calculisto/json_validator
+[submodule "git_submodules/isto/root_finding"]
+	path = git_submodules/isto/root_finding
+	url = https://github.com/calculisto/root_finding
+[submodule "git_submodules/isto/multikey_multimap"]
+	path = git_submodules/isto/multikey_multimap
+	url = https://github.com/calculisto/multikey_multimap
+[submodule "git_submodules/isto/uri"]
+	path = git_submodules/isto/uri
+	url = https://github.com/calculisto/uri
+[submodule "git_submodules/taocpp/json"]
+	path = git_submodules/taocpp/json
+	url = https://github.com/taocpp/json
+[submodule "git_submodules/taocpp/pegtl"]
+	path = git_submodules/taocpp/pegtl
+	url = https://github.com/taocpp/pegtl
+[submodule "git_submodules/gabime/spdlog"]
+	path = git_submodules/gabime/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "git_submodules/yhirose/cpp_httplib"]
+	path = git_submodules/yhirose/cpp_httplib
+	url = https://github.com/yhirose/cpp-httplib
+[submodule "git_submodules/jarro2783/cxxopts"]
+	path = git_submodules/jarro2783/cxxopts
+	url = https://github.com/jarro2783/cxxopts
