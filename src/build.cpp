@@ -4,8 +4,8 @@
 #include <fmt/std.h>
 #include <fmt/chrono.h>
     using fmt::print;
-#include "isto/json_validator/json_validator.hpp"
-    using isto::json_validator::validator_t;
+#include "calculisto/json_validator/json_validator.hpp"
+    using calculisto::json_validator::validator_t;
 
     using namespace std::literals;
 

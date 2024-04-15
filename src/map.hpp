@@ -1,8 +1,8 @@
 #pragma once
-#include <isto/multikey_multimap/multikey_multimap.hpp>
-    using isto::multikey_multimap::multikey_multimap_t;
-#include <isto/uncertain_value/uncertain_value.hpp>
-    using isto::uncertain_value::uncertain_value_t;
+#include <calculisto/multikey_multimap/multikey_multimap.hpp>
+    using calculisto::multikey_multimap::multikey_multimap_t;
+#include <calculisto/uncertain_value/uncertain_value.hpp>
+    using calculisto::uncertain_value::uncertain_value_t;
 #include <string>
 #include <vector>
 

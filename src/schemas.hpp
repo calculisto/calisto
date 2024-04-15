@@ -2,7 +2,7 @@
 #include <string_view>
 
     namespace
-isto::remote_services::schemas
+calculisto::remote_services::schemas
 {
     constexpr std::string_view
 json_rpc_request_schema = R"(
@@ -185,4 +185,4 @@ json_rpc_response_schema = R"(
     }]
 }
 )";
-} // namespace isto::remote_services::schemas
+} // namespace calculisto::remote_services::schemas

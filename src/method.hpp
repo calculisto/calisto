@@ -9,7 +9,7 @@ json_t = tao::json::value;
 schema_t = json_t;
 
     namespace
-isto::remote_services
+calculisto::remote_services
 {
 /** A function that processes a request.
  * Its input is JSON data that must conform to the method_t::expects schema, 
@@ -36,4 +36,4 @@ method_t
  */
     using
 methods_t = std::unordered_map <std::string, method_t>;
-} // namespace isto::remote_services
+} // namespace calculisto::remote_services

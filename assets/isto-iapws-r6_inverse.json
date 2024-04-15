@@ -1,5 +1,5 @@
 {
-    "header":"../../iapws/include/isto/iapws/r6_inverse.hpp",
+    "header":"calculisto/iapws/r6_inverse.hpp",
     "model": 
     {
         "name": "ISTO_IAPWS_R6_INVERSE",
@@ -8,56 +8,56 @@
     "functions":
     [
         {
-            "function":"isto::iapws::r6_inverse::density_pt",
+            "function":"calculisto::iapws::r6_inverse::density_pt",
             "substance":"water",
             "property":"density",
             "dimension": "density",
             "conditions": ["pressure", "temperature"]
         },
         {
-            "function":"isto::iapws::r6_inverse::massic_internal_energy_pt",
+            "function":"calculisto::iapws::r6_inverse::massic_internal_energy_pt",
             "substance":"water",
             "property":"massic_internal_energy",
             "dimension": "massic_energy",
             "conditions": ["pressure", "temperature"]
         },
         {
-            "function":"isto::iapws::r6_inverse::massic_entropy_pt",
+            "function":"calculisto::iapws::r6_inverse::massic_entropy_pt",
             "substance":"water",
             "property":"massic_entropy",
             "dimension": "massic_entropy",
             "conditions": ["pressure", "temperature"]
         },
         {
-            "function":"isto::iapws::r6_inverse::massic_enthalpy_pt",
+            "function":"calculisto::iapws::r6_inverse::massic_enthalpy_pt",
             "substance":"water",
             "property":"massic_enthalpy",
             "dimension": "massic_enthalpy",
             "conditions": ["pressure", "temperature"]
         },
         {
-            "function":"isto::iapws::r6_inverse::massic_isochoric_heat_capacity_pt",
+            "function":"calculisto::iapws::r6_inverse::massic_isochoric_heat_capacity_pt",
             "substance":"water",
             "property":"massic_isochoric_heat_capacity",
             "dimension": "massic_heat_capacity",
             "conditions": ["pressure", "temperature"]
         },
         {
-            "function":"isto::iapws::r6_inverse::massic_isobaric_heat_capacity_pt",
+            "function":"calculisto::iapws::r6_inverse::massic_isobaric_heat_capacity_pt",
             "substance":"water",
             "property":"massic_isobaric_heat_capacity",
             "dimension": "massic_heat_capacity",
             "conditions": ["pressure", "temperature"]
         },
         {
-            "function":"isto::iapws::r6_inverse::massic_gibbs_free_energy_pt",
+            "function":"calculisto::iapws::r6_inverse::massic_gibbs_free_energy_pt",
             "substance":"water",
             "property":"massic_gibbs_free_energy",
             "dimension": "massic_energy",
             "conditions": ["pressure", "temperature"]
         },
         {
-            "function":"isto::iapws::r6_inverse::speed_of_sound_pt",
+            "function":"calculisto::iapws::r6_inverse::speed_of_sound_pt",
             "substance":"water",
             "property":"speed_of_sound",
             "dimension": "velocity",

@@ -36,7 +36,7 @@ int main(int argc, char **argv)
         args = options.parse (argc, argv);
     }
 
-        using namespace isto::remote_services;
+        using namespace calculisto::remote_services;
 
         request_processor_t
     request_processor;

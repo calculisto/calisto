@@ -3,7 +3,7 @@
 #include <httplib.h>
 
     namespace
-isto::remote_services
+calculisto::remote_services
 {
     template <class RequestProcessor>
     class
@@ -65,4 +65,4 @@ public:
         server_m.stop ();
     }
 };
-} // namespace isto::remote_services
+} // namespace calculisto::remote_services

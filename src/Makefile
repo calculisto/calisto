@@ -1,22 +1,22 @@
 .PHONY: all clean
 
-CXXFLAGS+=                                           \
-  -std=c++20                                         \
-  -Wall                                              \
-  -Wextra                                            \
-	-I../git_submodules/taocpp/pegtl/include           \
-	-I../git_submodules/taocpp/json/include            \
-	-I../git_submodules/gabime/spdlog/include          \
-	-I../git_submodules/yhirose/cpp_httplib            \
-  -I../git_submodules/jarro2783/cxxopts/include      \
-	-I../git_submodules/isto/array/include             \
-	-I../git_submodules/isto/iapws/include             \
-	-I../git_submodules/isto/json_validator/include    \
-	-I../git_submodules/isto/multikey_multimap/include \
-	-I../git_submodules/isto/root_finding/include      \
-	-I../git_submodules/isto/uncertain_value/include   \
-	-I../git_submodules/isto/units/include             \
-	-I../git_submodules/isto/uri/include               \
+CXXFLAGS+=                                                 \
+  -std=c++20                                               \
+  -Wall                                                    \
+  -Wextra                                                  \
+	-I../git_submodules/taocpp/pegtl/include                 \
+	-I../git_submodules/taocpp/json/include                  \
+	-I../git_submodules/gabime/spdlog/include                \
+	-I../git_submodules/yhirose/cpp_httplib                  \
+  -I../git_submodules/jarro2783/cxxopts/include            \
+	-I../git_submodules/calculisto/array/include             \
+	-I../git_submodules/calculisto/iapws/include             \
+	-I../git_submodules/calculisto/json_validator/include    \
+	-I../git_submodules/calculisto/multikey_multimap/include \
+	-I../git_submodules/calculisto/root_finding/include      \
+	-I../git_submodules/calculisto/uncertain_value/include   \
+	-I../git_submodules/calculisto/units/include             \
+	-I../git_submodules/calculisto/uri/include               \
 
 LINK.o=${LINK.cc}
 

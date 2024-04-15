@@ -5,7 +5,7 @@
 #include <spdlog/sinks/rotating_file_sink.h>
 
     namespace
-isto::remote_services
+calculisto::remote_services
 {
     using 
 logger_t = std::shared_ptr <spdlog::logger>;
@@ -27,4 +27,4 @@ make_logger_file (std::string const& name, std::string const& file)
     r->set_pattern ("%C-%m-%d %T.%e %^%l%$ %n: %v");
     return r;
 }
-} // namespace isto::remote_services
+} // namespace calculisto::remote_services

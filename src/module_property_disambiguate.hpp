@@ -1,7 +1,7 @@
 #pragma once
 
     namespace
-isto::uncertain_value
+calculisto::uncertain_value
 {
     template <class>
     struct
@@ -436,9 +436,9 @@ operator - (uncertain_value_t <U> const& u, array_t <T, N> const& a)
 {
     return u - array_t <uncertain_value_t <V>, N> { a };
 }
-} // namespace isto::uncertain_value
+} // namespace calculisto::uncertain_value
     namespace
-isto::array 
+calculisto::array 
 {
     template <
           class T
@@ -479,4 +479,4 @@ pow (uncertain_value_t <T> const& t, const array_t <U, N>& exp)
     return r;
 }
 
-} // namespace isto::array
+} // namespace calculisto::array

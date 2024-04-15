@@ -7,7 +7,7 @@
     using namespace std::literals;
 
     namespace
-isto::remote_services
+calculisto::remote_services
 {
     class
 module_t 
@@ -192,4 +192,4 @@ private:
         map_t
     map_m;
 };
-} // namespace isto::remote_services
+} // namespace calculisto::remote_services

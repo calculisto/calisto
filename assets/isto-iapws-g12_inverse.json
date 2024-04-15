@@ -1,5 +1,5 @@
 {
-    "header":"../../iapws/include/isto/iapws/g12_inverse.hpp",
+    "header":"calculisto/iapws/g12_inverse.hpp",
     "model": 
     {
         "name": "ISTO_IAPWS_G12_INVERSE",
@@ -8,49 +8,49 @@
     "functions":
     [
         {
-            "function":"isto::iapws::g12_inverse::pressure_dt",
+            "function":"calculisto::iapws::g12_inverse::pressure_dt",
             "substance":"supercooled_water",
             "property":"pressure",
             "dimension": "pressure",
             "conditions": ["density", "temperature"]
         },
         {
-            "function":"isto::iapws::g12_inverse::massic_entropy_dt",
+            "function":"calculisto::iapws::g12_inverse::massic_entropy_dt",
             "substance":"supercooled_water",
             "property":"massic_entropy",
             "dimension": "massic_entropy",
             "conditions": ["density", "temperature"]
         },
         {
-            "function":"isto::iapws::g12_inverse::isothermal_compressibility_dt",
+            "function":"calculisto::iapws::g12_inverse::isothermal_compressibility_dt",
             "substance":"supercooled_water",
             "property":"isothermal_compressibility",
             "dimension": "compressibility",
             "conditions": ["density", "temperature"]
         },
         {
-            "function":"isto::iapws::g12_inverse::thermal_expansion_coefficient_dt",
+            "function":"calculisto::iapws::g12_inverse::thermal_expansion_coefficient_dt",
             "substance":"supercooled_water",
             "property":"thermal_expansion_coefficient",
             "dimension": "thermal_expansion",
             "conditions": ["density", "temperature"]
         },
         {
-            "function":"isto::iapws::g12_inverse::massic_isobaric_heat_capacity_dt",
+            "function":"calculisto::iapws::g12_inverse::massic_isobaric_heat_capacity_dt",
             "substance":"supercooled_water",
             "property":"massic_isobaric_heat_capacity",
             "dimension": "massic_heat_capacity",
             "conditions": ["density", "temperature"]
         },
         {
-            "function":"isto::iapws::g12_inverse::massic_isochoric_heat_capacity_dt",
+            "function":"calculisto::iapws::g12_inverse::massic_isochoric_heat_capacity_dt",
             "substance":"supercooled_water",
             "property":"massic_isochoric_heat_capacity",
             "dimension": "massic_heat_capacity",
             "conditions": ["density", "temperature"]
         },
         {
-            "function":"isto::iapws::g12_inverse::speed_of_sound_dt",
+            "function":"calculisto::iapws::g12_inverse::speed_of_sound_dt",
             "substance":"supercooled_water",
             "property":"speed_of_sound",
             "dimension": "velocity",

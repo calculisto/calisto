@@ -1,27 +1,3 @@
-[submodule "git_submodules/isto/array"]
-	path = git_submodules/isto/array
-	url = https://github.com/calculisto/array
-[submodule "git_submodules/isto/uncertain_value"]
-	path = git_submodules/isto/uncertain_value
-	url = https://github.com/calculisto/uncertain_value
-[submodule "git_submodules/isto/iapws"]
-	path = git_submodules/isto/iapws
-	url = https://github.com/calculisto/iapws
-[submodule "git_submodules/isto/units"]
-	path = git_submodules/isto/units
-	url = https://github.com/calculisto/units
-[submodule "git_submodules/isto/json_validator"]
-	path = git_submodules/isto/json_validator
-	url = https://github.com/calculisto/json_validator
-[submodule "git_submodules/isto/root_finding"]
-	path = git_submodules/isto/root_finding
-	url = https://github.com/calculisto/root_finding
-[submodule "git_submodules/isto/multikey_multimap"]
-	path = git_submodules/isto/multikey_multimap
-	url = https://github.com/calculisto/multikey_multimap
-[submodule "git_submodules/isto/uri"]
-	path = git_submodules/isto/uri
-	url = https://github.com/calculisto/uri
 [submodule "git_submodules/taocpp/json"]
 	path = git_submodules/taocpp/json
 	url = https://github.com/taocpp/json
@@ -37,3 +13,27 @@
 [submodule "git_submodules/jarro2783/cxxopts"]
 	path = git_submodules/jarro2783/cxxopts
 	url = https://github.com/jarro2783/cxxopts
+[submodule "git_submodules/calculisto/array"]
+	path = git_submodules/calculisto/array
+	url = https://github.com/calculisto/array
+[submodule "git_submodules/calculisto/uncertain_value"]
+	path = git_submodules/calculisto/uncertain_value
+	url = https://github.com/calculisto/uncertain_value
+[submodule "git_submodules/calculisto/iapws"]
+	path = git_submodules/calculisto/iapws
+	url = https://github.com/calculisto/iapws
+[submodule "git_submodules/calculisto/units"]
+	path = git_submodules/calculisto/units
+	url = https://github.com/calculisto/units
+[submodule "git_submodules/calculisto/json_validator"]
+	path = git_submodules/calculisto/json_validator
+	url = https://github.com/calculisto/json_validator
+[submodule "git_submodules/calculisto/root_finding"]
+	path = git_submodules/calculisto/root_finding
+	url = https://github.com/calculisto/root_finding
+[submodule "git_submodules/calculisto/multikey_multimap"]
+	path = git_submodules/calculisto/multikey_multimap
+	url = https://github.com/calculisto/multikey_multimap
+[submodule "git_submodules/calculisto/uri"]
+	path = git_submodules/calculisto/uri
+	url = https://github.com/calculisto/uri

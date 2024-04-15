@@ -1,5 +1,5 @@
 {
-    "header":"../../iapws/include/isto/iapws/r10_inverse.hpp",
+    "header":"calculisto/iapws/r10_inverse.hpp",
     "model": 
     {
         "name": "ISTO_IAPWS_R10_INVERSE",
@@ -8,70 +8,70 @@
     "functions":
     [
         {
-            "function":"isto::iapws::r10_inverse::massic_enthalpy_dt",
+            "function":"calculisto::iapws::r10_inverse::massic_enthalpy_dt",
             "substance":"ice_Ih",
             "property":"massic_enthalpy",
             "dimension": "massic_enthalpy",
             "conditions": ["density", "temperature"]
         },
         {
-            "function":"isto::iapws::r10_inverse::massic_helmholtz_energy_dt",
+            "function":"calculisto::iapws::r10_inverse::massic_helmholtz_energy_dt",
             "substance":"ice_Ih",
             "property":"massic_helmholtz_energy",
             "dimension": "massic_energy",
             "conditions": ["density", "temperature"]
         },
         {
-            "function":"isto::iapws::r10_inverse::massic_internal_energy_dt",
+            "function":"calculisto::iapws::r10_inverse::massic_internal_energy_dt",
             "substance":"ice_Ih",
             "property":"massic_internal_energy",
             "dimension": "massic_energy",
             "conditions": ["density", "temperature"]
         },
         {
-            "function":"isto::iapws::r10_inverse::massic_entropy_dt",
+            "function":"calculisto::iapws::r10_inverse::massic_entropy_dt",
             "substance":"ice_Ih",
             "property":"massic_entropy",
             "dimension": "massic_entropy",
             "conditions": ["density", "temperature"]
         },
         {
-            "function":"isto::iapws::r10_inverse::massic_isobaric_heat_capacity_dt",
+            "function":"calculisto::iapws::r10_inverse::massic_isobaric_heat_capacity_dt",
             "substance":"ice_Ih",
             "property":"massic_isobaric_heat_capacity",
             "dimension": "massic_heat_capacity",
             "conditions": ["density", "temperature"]
         },
         {
-            "function":"isto::iapws::r10_inverse::pressure_dt",
+            "function":"calculisto::iapws::r10_inverse::pressure_dt",
             "substance":"ice_Ih",
             "property":"pressure",
             "dimension": "density",
             "conditions": ["density", "temperature"]
         },
         {
-            "function":"isto::iapws::r10_inverse::cubic_expansion_coefficient_dt",
+            "function":"calculisto::iapws::r10_inverse::cubic_expansion_coefficient_dt",
             "substance":"ice_Ih",
             "property":"cubic_expansion_coefficient",
             "dimension": "thermal_expansion",
             "conditions": ["density", "temperature"]
         },
         {
-            "function":"isto::iapws::r10_inverse::pressure_coefficient_dt",
+            "function":"calculisto::iapws::r10_inverse::pressure_coefficient_dt",
             "substance":"ice_Ih",
             "property":"pressure_coefficient",
             "dimension": "pressure_coefficient",
             "conditions": ["density", "temperature"]
         },
         {
-            "function":"isto::iapws::r10_inverse::isothermal_compressibility_dt",
+            "function":"calculisto::iapws::r10_inverse::isothermal_compressibility_dt",
             "substance":"ice_Ih",
             "property":"isothermal_compressibility",
             "dimension": "compressibility",
             "conditions": ["density", "temperature"]
         },
         {
-            "function":"isto::iapws::r10_inverse::isentropic_compressibility_dt",
+            "function":"calculisto::iapws::r10_inverse::isentropic_compressibility_dt",
             "substance":"ice_Ih",
             "property":"isentropic_compressibility",
             "dimension": "compressibility",

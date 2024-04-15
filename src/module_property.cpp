@@ -5,21 +5,21 @@
 #include <fmt/ranges.h>
 #include "logger.hpp"
 #include "method.hpp"
-#include <isto/multikey_multimap/multikey_multimap.hpp>
-    using isto::multikey_multimap::multikey_multimap_t;
-#include <isto/uncertain_value/uncertain_value.hpp>
-    using isto::uncertain_value::uncertain_value_t;
-#include <isto/units/unit_parser.hpp>
-    using namespace isto::units::dimension;
-    using isto::units::quantity_t;
-    using isto::units::any_quantity_t;
-#include <isto/uncertain_value/uncertain_value_fmt.hpp>
-#include <isto/units/dimension_fmt.hpp>
+#include <calculisto/multikey_multimap/multikey_multimap.hpp>
+    using calculisto::multikey_multimap::multikey_multimap_t;
+#include <calculisto/uncertain_value/uncertain_value.hpp>
+    using calculisto::uncertain_value::uncertain_value_t;
+#include <calculisto/units/unit_parser.hpp>
+    using namespace calculisto::units::dimension;
+    using calculisto::units::quantity_t;
+    using calculisto::units::any_quantity_t;
+#include <calculisto/uncertain_value/uncertain_value_fmt.hpp>
+#include <calculisto/units/dimension_fmt.hpp>
     using fmt::format;
-#include <isto/array/array.hpp>
-    using isto::array::array_t;
+#include <calculisto/array/array.hpp>
+    using calculisto::array::array_t;
 
-    using namespace isto;
+    using namespace calculisto;
 
 #include "module_property_disambiguate.hpp"
 
@@ -29,7 +29,7 @@
 #include "module_property_map_headers.inc"
 
     namespace
-isto::remote_services::module::property
+calculisto::remote_services::module::property
 {
 inline static logger_t
 LOG = make_logger ("module/property");
@@ -871,10 +871,10 @@ public:
     static const auto
 property = property_t {};
 
-} // namespace isto::remote_services::module::property
+} // namespace calculisto::remote_services::module::property
 
 
-    using isto::remote_services::module::property::property;
+    using calculisto::remote_services::module::property::property;
     extern "C"
 {
     schema_t
@@ -931,7 +931,7 @@ module_schema = R"({
 }}}
 })"_json;
 
-    isto::remote_services::methods_t
+    calculisto::remote_services::methods_t
 module_methods = 
 {{
     "test", 

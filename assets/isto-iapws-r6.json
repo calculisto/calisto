@@ -1,5 +1,5 @@
 {
-    "header":"../../iapws/include/isto/iapws/r6.hpp",
+    "header":"calculisto/iapws/r6.hpp",
     "model": 
     {
         "name": "ISTO_IAPWS_R6",
@@ -8,56 +8,56 @@
     "functions":
     [
         {
-            "function":"isto::iapws::r6::pressure_dt",
+            "function":"calculisto::iapws::r6::pressure_dt",
             "substance":"water",
             "property":"pressure",
             "dimension": "pressure",
             "conditions": ["density", "temperature"]
         },
         {
-            "function":"isto::iapws::r6::massic_internal_energy_dt",
+            "function":"calculisto::iapws::r6::massic_internal_energy_dt",
             "substance":"water",
             "property":"massic_internal_energy",
             "dimension": "massic_energy",
             "conditions": ["density", "temperature"]
         },
         {
-            "function":"isto::iapws::r6::massic_entropy_dt",
+            "function":"calculisto::iapws::r6::massic_entropy_dt",
             "substance":"water",
             "property":"massic_entropy",
             "dimension": "massic_entropy",
             "conditions": ["density", "temperature"]
         },
         {
-            "function":"isto::iapws::r6::massic_enthalpy_dt",
+            "function":"calculisto::iapws::r6::massic_enthalpy_dt",
             "substance":"water",
             "property":"massic_enthalpy",
             "dimension": "massic_energy",
             "conditions": ["density", "temperature"]
         },
         {
-            "function":"isto::iapws::r6::massic_isochoric_heat_capacity_dt",
+            "function":"calculisto::iapws::r6::massic_isochoric_heat_capacity_dt",
             "substance":"water",
             "property":"massic_isochoric_heat_capacity",
             "dimension": "massic_heat_capacity",
             "conditions": ["density", "temperature"]
         },
         {
-            "function":"isto::iapws::r6::massic_isobaric_heat_capacity_dt",
+            "function":"calculisto::iapws::r6::massic_isobaric_heat_capacity_dt",
             "substance":"water",
             "property":"massic_isobaric_heat_capacity",
             "dimension": "massic_heat_capacity",
             "conditions": ["density", "temperature"]
         },
         {
-            "function":"isto::iapws::r6::massic_gibbs_free_energy_dt",
+            "function":"calculisto::iapws::r6::massic_gibbs_free_energy_dt",
             "substance":"water",
             "property":"massic_gibbs_free_energy",
             "dimension": "massic_energy",
             "conditions": ["density", "temperature"]
         },
         {
-            "function":"isto::iapws::r6::speed_of_sound_dt",
+            "function":"calculisto::iapws::r6::speed_of_sound_dt",
             "substance":"water",
             "property":"speed_of_sound",
             "dimension": "velocity",

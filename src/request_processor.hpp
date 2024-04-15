@@ -1,8 +1,8 @@
 #pragma once
 #include "logger.hpp"
 #include "module.hpp"
-#include "isto/json_validator/json_validator.hpp"
-    using isto::json_validator::validator_t;    
+#include "calculisto/json_validator/json_validator.hpp"
+    using calculisto::json_validator::validator_t;    
 #include "schemas.hpp"
 #include <fmt/chrono.h>
 
@@ -12,7 +12,7 @@
 #define CORE_MODULE_NAME "core"
 
     namespace
-isto::remote_services
+calculisto::remote_services
 {
     namespace 
 json_rpc_error
@@ -410,4 +410,4 @@ public:
         )";
     }
 };
-} // namespace isto::remote_services
+} // namespace calculisto::remote_services
