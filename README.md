@@ -1,6 +1,4 @@
 # CALISTO 
-
-## Introduction
 CALISTO is the framework set up at the [ISTO](https://www.isto-orleans.fr) 
 laboratory to implement scientific numerical models, and make them globally 
 available to everyone.
@@ -57,14 +55,14 @@ The HTTP response contains the following body:
   }
 }
 ```
-According to this model, the pressure is approximately 101327 Pa.
+According to this model (the DOI of which is also returned), the pressure is 
+approximately 101327 Pa.
 
 Models are grouped into modules. At the moment only one such module is
 implemented, the `property` module. It provides the thermodynamic properties of
 water, in various states, at some given conditions.
 
 ## Documentation
-
 Documentation is available online here: 
 https://calcul-isto.cnrs-orleans.fr/calisto/
 
@@ -80,7 +78,6 @@ A prototype of an interactive web interface to the `property` module is
 available here: https://calcul-isto.cnrs-orleans.fr/calisto/property/
 
 ## Building
-
 This
 ```sh
 git clone --recurse-submodules git://github.com/calculisto/calisto.git
@@ -91,7 +88,6 @@ will build the server and the `property` module. It requires a C++20 capable
 compiler and GNU Make.
 
 ### Source repositories
-
 The whole framework is split in distinct, self-contained repositories. This
 particular repository only contains the code for the HTTP server and the 
 `property` module.
@@ -112,7 +108,7 @@ The other repositories participating in this project are
  implements some root-finding algorithms.
  - [`calculisto/uncertain_value`](https://github.com/calculisto/uncertain_value)
  implements a value-with-attached-uncertainty type, along with the necessary
- arithmetic operators and mathematical function.
+ arithmetic operators and mathematical functions.
  - [`calculisto/units`](https://github.com/calculisto/units)
  implements a physical units system.
  - [`calculisto/uri`](https://github.com/calculisto/uri)
@@ -137,15 +133,15 @@ For convenience, those are also included in this repository as git sub-modules.
 Other dependencies that are not provided as sub-modules are:
  - [doctest/doctest](https://github.com/doctest/doctest), and
  - [fmtlib/fmt](https://github.com/fmtlib/fmt).
+
 These are usually provided by your GNU/Linux distribution.
 
 ## Design considerations
-
 ### Implementation
 The framework is implemented in C++20. 
 
 We value correctness and expressiveness above performance. As a result, this 
-code probably has a lot of opportunity for optimization.
+code probably has a lot of opportunities for optimization.
 
 ### Security
 This server does not have HTTPS capabilities. If security is of concern, it
@@ -155,15 +151,17 @@ should be hosted behind an adequately configured reverse-proxy.
 Each repository has its own unit test suite. The tests in this repository serve 
 as integration tests. 
 
-## Affiliation
+## License
+SPDX-License-Identifier: AGPL-3.0-only
 
+## Affiliation
 This material is developed by the Numerical Modelling platform at the 
 Institut des Sciences de la Terre d'Orléans (https://www.isto-orleans.fr), 
 a joint laboratory of the University of Orléans (https://www.univ-orleans.fr), 
 the french National Center For Scientific Research (https://www.cnrs.fr) and 
 the french Geological Survey (https://www.brgm.fr).
 
-![logo ISTO](https://calcul-isto.cnrs-orleans.fr/logos/isto-156.png) &emsp;
-![logo CNRS](https://calcul-isto.cnrs-orleans.fr/logos/cnrs-128.png) &emsp;
-![logo UO](https://calcul-isto.cnrs-orleans.fr/logos/uo-180.png) &emsp;
-![logo BRGM](https://calcul-isto.cnrs-orleans.fr/logos/brgm-256.png)
+[![logo ISTO](https://calcul-isto.cnrs-orleans.fr/logos/isto-156.png)](https://www.isto-orleans.fr) &emsp;
+[![logo CNRS](https://calcul-isto.cnrs-orleans.fr/logos/cnrs-128.png)](https://www.cnrs.fr) &emsp;
+[![logo UO](https://calcul-isto.cnrs-orleans.fr/logos/uo-128.png)](https://www.univ-orleans.fr) &emsp;
+[![logo BRGM](https://calcul-isto.cnrs-orleans.fr/logos/brgm-256.png)](https://www.brgm.fr)
