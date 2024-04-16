@@ -80,12 +80,12 @@ available here: https://calcul-isto.cnrs-orleans.fr/calisto/property/
 ## Building
 This
 ```sh
-git clone --recurse-submodules git://github.com/calculisto/calisto.git
+git clone --recurse-submodules https://github.com/calculisto/calisto
 cd calisto
 make -j
 ```
-will build the server and the `property` module. It requires a C++20 capable
-compiler and GNU Make.
+will build the server and the `property` module and launch the test suite. 
+It requires a C++20 capable compiler and GNU Make.
 
 ### Source repositories
 The whole framework is split in distinct, self-contained repositories. This
