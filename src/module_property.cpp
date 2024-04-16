@@ -586,14 +586,18 @@ private:
                 std::size_t
             index_m;
         };
-            auto const&
+            auto const
         get_uncertainty (json_t const& j)
         {
                 static const json_t
             def = 0.0;
             if (auto u = j.find ("uncertainty"); u)
             {
-                return *u;
+                    const auto
+                d = u->get_double ();
+                    const json_t
+                r = d * d;
+                return r;
             }
                 return def;
         }
