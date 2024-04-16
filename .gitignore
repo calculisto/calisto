@@ -1,2 +1,4 @@
-src_dev/server
-src_dev/*.so
+src/server
+src/*.so
+src/*.inc
+src/*.log
