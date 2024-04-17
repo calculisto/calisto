@@ -57,6 +57,43 @@ should_succeed ()
     fi
 }
 
+should_succeed_u ()
+{
+    substance="$1"
+    property="$2"
+    model="$3"
+    cond1="$4"
+    cond1v=$(number "$5")
+    cond1un=$(number "$6")
+    cond1u="$7"
+    cond2="$8"
+    cond2v=$(number "$9")
+    cond2un=$(number "${10}")
+    cond2u="${11}"
+    expected=$(number "${12}")
+
+    request='{"jsonrpc":"2.0","id":'$RANDOM',"method":"property/execute_function","params":{"signature":{"substance":"'$substance'","property":"'$property'","model":"'$model'","conditions":["'$cond1'","'$cond2'"]},"arguments":{"'$cond1'":{"uncertainty":'$cond1un',"value":'$cond1v',"unit":"'$cond1u'"},"'$cond2'":{"uncertainty":'$cond2un',"value":'$cond2v',"unit":"'$cond2u'"}}}}'
+    validate_request "$request"
+    response=$(curl -s http://127.0.0.1:7326 -d "$request")
+    failed=$(echo "$response" | jq .error.message)
+    if [[ "$failed" != "null" ]] 
+    then
+        echo "Request failed:"
+        echo "$request" | jq
+        echo "Response was:"
+        echo "$response" | jq
+    fi
+    result=$(echo "$response" | jq .result.value)
+    error=$(number "abs(abs($result - $expected) / $expected)")
+    succes=$(calc -dp "$error < 1e-5")
+    if [[ "$succes" != 1 ]]
+    then
+        echo "Request gave back bad result:"
+        echo "$request" | jq
+        echo "Got $result, expected $expected"
+    fi
+}
+
 should_fail ()
 {
     error_code=$1
@@ -87,6 +124,8 @@ echo "Server pid is $SERVER_PID"
 # Give the server some time to initialize everything
 sleep 0.1;
 
+should_succeed_u water               massic_entropy                   ISTO_IAPWS_R6            temperature       900          0.1    K        density           0.241     0.01         kg.m-3       9166.53194
+should_succeed_u water               massic_entropy                   ISTO_IAPWS_R6            temperature       900          0      K        density           0.241     0            kg.m-3       9166.53194
 
 should_succeed   water               massic_entropy                   ISTO_IAPWS_R6            temperature       900              K        density           0.241              kg.m-3       9166.53194
 should_succeed   water               massic_entropy                   ISTO_IAPWS_R6            density           0.241            kg.m-3   temperature       900                K            9166.53194
