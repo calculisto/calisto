@@ -594,7 +594,7 @@ private:
             if (auto u = j.find ("uncertainty"); u)
             {
                     const auto
-                d = u->get_double ();
+                d = u->as <double> ();
                     const json_t
                 r = d * d;
                 return r;
