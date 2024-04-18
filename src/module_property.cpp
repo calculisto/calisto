@@ -5,6 +5,7 @@
 #include <fmt/ranges.h>
 #include "logger.hpp"
 #include "method.hpp"
+#include "tao/json/type.hpp"
 #include <calculisto/multikey_multimap/multikey_multimap.hpp>
     using calculisto::multikey_multimap::multikey_multimap_t;
 #include <calculisto/uncertain_value/uncertain_value.hpp>
@@ -474,7 +475,7 @@ private:
             if (json.is_array ())
             {
                 is_array_m = true;
-                array_m = &(json.get_array ());
+                array_m = json.get_array ();
                 return;
             }
             is_array_m = false;
@@ -497,14 +498,14 @@ private:
         {
             if (is_array_m)
             {
-                switch ((*array_m)[index_m].type ())
+                switch (array_m[index_m].type ())
                 {
                     case type::SIGNED:
-                        return (*array_m)[index_m].get_signed () * magnitude_m;
+                        return array_m[index_m].get_signed () * magnitude_m;
                     case type::UNSIGNED:
-                        return (*array_m)[index_m].get_unsigned () * magnitude_m;
+                        return array_m[index_m].get_unsigned () * magnitude_m;
                     case type::DOUBLE:
-                        return (*array_m)[index_m].get_double () * magnitude_m;
+                        return array_m[index_m].get_double () * magnitude_m;
                     default:
                         throw std::runtime_error { format ("Internal error {}", std::source_location::current ().line ())};
                 };
@@ -517,7 +518,7 @@ private:
         {
             if (is_array_m)
             {
-                return array_m->size ();
+                return array_m.size ();
             }
             return 1;
         }
@@ -526,7 +527,7 @@ private:
         index_m = 0;
             bool
         is_array_m;
-            std::vector <json_t> const*
+            std::vector <json_t>
         array_m;
             double
         value_m;
@@ -593,13 +594,23 @@ private:
             def = 0.0;
             if (auto u = j.find ("uncertainty"); u)
             {
-                    const auto
-                d = u->as <double> ();
-                    const json_t
-                r = d * d;
+                if (!u->is_array ())
+                {
+                        const auto
+                    d = u->as <double> ();
+                        const json_t
+                    r = d * d;
+                    return r;
+                }
+                    json_t
+                r = empty_array;
+                for (const auto& v: u->get_array ())
+                {
+                    r.push_back (v.as <double> () * v.as <double> ());
+                }
                 return r;
             }
-                return def;
+            return def;
         }
     public:
         magic_t (std::vector <std::pair <json_t, double>> const& arguments)

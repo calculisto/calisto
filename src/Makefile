@@ -1,6 +1,7 @@
 .PHONY: all clean
 
 CXXFLAGS+=                                                 \
+	-g                                                       \
   -std=c++20                                               \
   -Wall                                                    \
   -Wextra                                                  \
