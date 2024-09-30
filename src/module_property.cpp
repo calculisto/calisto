@@ -851,7 +851,7 @@ public:
                 }
                 ret.push_back ({
                       { "value", r.value }
-                    , { "uncertainty", r.uncertainty }
+                    , { "uncertainty", r.variance }
                     , { "unit", r_u }
                 });
             }
